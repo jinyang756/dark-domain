@@ -1,0 +1,264 @@
+---
+// 电子书模板 V2.0 - 支持有声阅读
+import '../styles/global.css';
+const { frontmatter } = Astro.props;
+---
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{frontmatter.title} - 暗域</title>
+</head>
+<body class="reading-view">
+    <div class="book-container">
+        <div class="book">
+            <!-- 左页 - 作为装饰 -->
+            <div class="page page-left">
+                <div class="page-content decorative">
+                    <div class="book-title-left">{frontmatter.title}</div>
+                    <div class="brand-symbol">◆</div>
+                </div>
+            </div>
+            <!-- 右页 - 文章正文与音频播放器 -->
+            <div class="page page-right">
+                <!-- 新增：有声读物播放器 -->
+                <div id="audio-player" class="audio-player">
+                    <button id="play-pause-btn" title="播放/暂停">▶</button>
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                </div>
+                <!-- 文章正文内容 -->
+                <article id="article-content" class="page-content">
+                    <slot /> 
+                </article>
+            </div>
+        </div>
+    </div>
+    <a href="/" class="return-link">&larr; 返回世界之门</a>
+</body>
+</html>
+
+<!-- 新增：驱动播放器的JavaScript逻辑 -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const articleContent = document.getElementById('article-content');
+        
+        // 检查浏览器是否支持语音合成
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance();
+            let isPlaying = false;
+            let charIndex = 0; // 追踪当前朗读到的字符位置
+
+            // 配置朗读者声音
+            const setupVoice = () => {
+                const text = articleContent.innerText;
+                utterance.text = text;
+                const voices = window.speechSynthesis.getVoices();
+                utterance.voice = voices.find(v => v.lang.startsWith('zh') && v.name.includes('男')) || voices.find(v => v.lang.startsWith('zh'));
+                utterance.lang = 'zh-CN';
+                utterance.pitch = 0.8;
+                utterance.rate = 1;
+            };
+
+            // 等待语音列表加载
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = setupVoice;
+            }
+
+            // 更新进度条
+            utterance.onboundary = (event) => {
+                charIndex = event.charIndex;
+                const percentage = (charIndex / utterance.text.length) * 100;
+                progressBar.style.width = `${percentage}%`;
+            };
+
+            // 朗读结束时重置状态
+            utterance.onend = () => {
+                isPlaying = false;
+                playPauseBtn.textContent = '▶';
+                progressBar.style.width = '0%';
+            };
+
+            // 播放/暂停按钮逻辑
+            playPauseBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    speechSynthesis.pause();
+                    isPlaying = false;
+                    playPauseBtn.textContent = '▶';
+                } else {
+                    // 如果是从头播放或从未播放过
+                    if (speechSynthesis.paused && charIndex > 0) {
+                        speechSynthesis.resume();
+                    } else {
+                        // 确保语音列表和文本已准备好
+                        setupVoice(); 
+                        speechSynthesis.cancel(); // 清除之前的队列
+                        speechSynthesis.speak(utterance);
+                    }
+                    isPlaying = true;
+                    playPauseBtn.textContent = '❚❚';
+                }
+            });
+
+        } else {
+            // 如果浏览器不支持，则隐藏播放器
+            document.getElementById('audio-player').style.display = 'none';
+        }
+    });
+</script>
+
+
+<style>
+/* ... (您已有的全部CSS代码保持不变) ... */
+
+/* 新增：音频播放器样式 */
+.audio-player {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    background-color: #e6dac8; /* 比纸页稍深的颜色 */
+    border-radius: 5px;
+    border: 1px solid #dcd0b8;
+    margin-bottom: 2rem;
+}
+
+#play-pause-btn {
+    background: none;
+    border: 2px solid #8c7853;
+    color: #8c7853;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#play-pause-btn:hover {
+    background-color: #8c7853;
+    color: #f3e9d2;
+}
+
+.progress-bar-container {
+    flex-grow: 1;
+    height: 8px;
+    background-color: #dcd0b8;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: var(--color-accent-blue);
+    border-radius: 4px;
+    transition: width 0.1s linear; /* 平滑的进度条过渡 */
+}
+/* ... (阅读视图、书本等其他样式保持不变) ... */
+.reading-view {
+    background-color: #1a1510;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+.book-container {
+    width: 100%;
+    height: 100%;
+    max-width: 1800px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.book {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
+}
+.page {
+    flex: 1;
+    background-color: #f3e9d2;
+    color: #3b2f2f;
+    padding: 3rem 4rem;
+    overflow-y: auto;
+    box-sizing: border-box;
+    position: relative;
+}
+.page-left {
+    border-right: 2px solid #c9b48e;
+    box-shadow: inset -15px 0 20px -10px rgba(0, 0, 0, 0.3);
+    border-radius: 10px 0 0 10px;
+}
+.page-right {
+    box-shadow: inset 15px 0 20px -10px rgba(0, 0, 0, 0.3);
+    border-radius: 0 10px 10px 0;
+}
+.page-content {
+    opacity: 0;
+    animation: fadeIn 1.5s ease 0.5s forwards;
+}
+.page-content.decorative {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    box-sizing: border-box;
+}
+.book-title-left {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    color: #8c7853;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+.brand-symbol {
+    font-size: 5rem;
+    color: var(--color-accent-purple);
+    opacity: 0.1;
+    align-self: center;
+}
+.page-content :global(h1),
+.page-content :global(h2),
+.page-content :global(h3),
+.page-content :global(h4) {
+    color: #5a4a3b;
+    font-family: var(--font-sans);
+    border-bottom: 1px solid #dcd0b8;
+    padding-bottom: 0.5rem;
+}
+.page-content :global(a) {
+    color: var(--color-accent-blue);
+}
+.page-content :global(a:hover) {
+    color: var(--color-accent-purple);
+}
+.return-link {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    color: #888;
+    background: rgba(0,0,0,0.3);
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+.return-link:hover {
+    color: #fff;
+    background: var(--color-accent-blue);
+}
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+</style>

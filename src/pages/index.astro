@@ -1,0 +1,151 @@
+---
+// 暗域首页 V4.0 - “声音与生命”
+import '../styles/global.css';
+
+const doorways = [
+  { name: '天道', href: '/core-theory', description: '宇宙观、炁、因果论' },
+  { name: '地道', href: '/case-studies', description: '现实规律、价值投资' },
+  { name: '人道', href: '/handbook', description: '内心修炼、自我之辨' },
+];
+---
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>暗域 · Athen Drakmvese</title>
+  <!-- 步骤一：引入Tone.js音频库 -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+</head>
+<body>
+  <div class="scene-container">
+    <!-- ... (您已有的场景HTML代码保持不变) ... -->
+    <div class="night-sky">
+      <div class="moon"></div>
+      <div class="stars"></div>
+      <div class="nebula"></div>
+    </div>
+    <div class="doorway">
+      <div class="door-frame">
+        <div class="door-interactions">
+          {doorways.map(door => (
+            <a href={door.href} class="interaction-point interactive-link" title={door.description}>{door.name}</a>
+          ))}
+        </div>
+      </div>
+      <div class="door">
+        <a href="/trailer" class="main-rune interactive-link" title="观看《熵减时钟》预告片">◆</a>
+      </div>
+    </div>
+    <div class="scholar-silhouette"></div>
+    <div class="ground"></div>
+
+    <!-- 步骤二：添加声音控制按钮 -->
+    <div id="sound-toggle" class="sound-control" title="开启声音">
+      🔇
+    </div>
+    
+    <footer class="site-footer">
+      Athen Drakmvese
+    </footer>
+  </div>
+</body>
+</html>
+
+<!-- 步骤三：添加全新的JavaScript逻辑 -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 获取所有可交互的链接
+    const interactiveLinks = document.querySelectorAll('.interactive-link');
+    const soundToggle = document.getElementById('sound-toggle');
+
+    let isAudioReady = false;
+    let isMuted = true;
+
+    // 创建交互点击音效
+    const clickSynth = new Tone.MembraneSynth({
+      pitchDecay: 0.01,
+      octaves: 2,
+      envelope: {
+        attack: 0.001,
+        decay: 0.2,
+        sustain: 0,
+      }
+    }).toDestination();
+
+    // 创建背景音乐合成器和效果器
+    const ambientSynth = new Tone.FMSynth({
+      harmonicity: 1.5,
+      modulationIndex: 10,
+      envelope: {
+        attack: 0.2,
+        decay: 1,
+      },
+    }).toDestination();
+    const reverb = new Tone.Reverb(8).toDestination();
+    ambientSynth.connect(reverb);
+    
+    // 背景音乐的音符序列
+    const notes = ['C2', 'G2', 'Eb3', 'Bb2'];
+    let noteIndex = 0;
+
+    // 背景音乐循环播放逻辑
+    const ambientLoop = new Tone.Loop(time => {
+      const note = notes[noteIndex % notes.length];
+      ambientSynth.triggerAttackRelease(note, '2n', time);
+      noteIndex++;
+    }, '4n').start(0); // 4n代表四分音符，即每个节拍触发一次
+
+    // 绑定交互点击音效
+    interactiveLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (!isMuted) {
+          clickSynth.triggerAttackRelease('C1', '8n');
+        }
+      });
+    });
+
+    // 声音总开关逻辑
+    soundToggle.addEventListener('click', async () => {
+      if (!isAudioReady) {
+        await Tone.start();
+        console.log('Audio is ready');
+        isAudioReady = true;
+        Tone.Transport.start(); // 启动Tone.js的全局时钟
+      }
+
+      if (isMuted) {
+        Tone.Destination.mute = false;
+        soundToggle.textContent = '🔊';
+        soundToggle.title = '静音';
+      } else {
+        Tone.Destination.mute = true;
+        soundToggle.textContent = '🔇';
+        soundToggle.title = '开启声音';
+      }
+      isMuted = !isMuted;
+    });
+  });
+</script>
+
+<style>
+  /* 步骤四：为新元素添加样式 */
+  .sound-control {
+    position: fixed;
+    bottom: 20px;
+    left: 30px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    z-index: 20;
+  }
+  .sound-control:hover {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  
+  /* 为所有交互链接添加一个通用类名，方便JS选择 */
+  .interaction-point, .main-rune {
+    /* 这里可以添加通用交互样式，如果需要的话 */
+  }
+</style>

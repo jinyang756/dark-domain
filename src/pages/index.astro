@@ -1,8 +1,7 @@
 ---
-// 暗域首页 最终版 V2.0 - 世界之门 (The World Gate)
+// 暗域首页 最终版 V4.0 - 真实之境 (The Realm of Reality)
 import '../styles/global.css';
 
-// 交互点数据
 const doorways = [
   { name: '天道', href: '/core-theory', description: '宇宙观、炁、因果论' },
   { name: '地道', href: '/case-studies', description: '现实规律、价值投资' },
@@ -14,246 +13,181 @@ const doorways = [
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>暗域 · Athen Drakmvese</title>
+  <!-- 我们依然保留Tone.js，用于未来可能的交互音效 -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
 </head>
 <body>
-  <div class="scene-container">
-    <div class="night-sky">
-      <div class="moon"></div>
-      <div class="stars"></div>
-      <div class="nebula"></div>
-    </div>
-    <div class="doorway">
-      <div class="door-frame">
-        <div class="door-interactions">
-          {doorways.map(door => (
-            <a href={door.href} class="interaction-point" title={door.description}>{door.name}</a>
-          ))}
-        </div>
-      </div>
-      <div class="door">
-        <div class="door-texture"></div>
-        <a href="/trailer" class="main-rune" title="观看《熵减时钟》预告片">◆</a>
-      </div>
-    </div>
-    <div class="scholar-silhouette">
-      <div class="scholar-cape"></div>
-    </div>
-    <div class="ground"></div>
-    <footer class="site-footer">
-      Athen Drakmvese
-    </footer>
+
+  <!-- 背景视频容器 -->
+  <div class="video-background">
+    <video autoplay loop muted playsinline id="bg-video">
+      <!-- 这是一个与您提供的意境非常相似的高清视频素材，您可以替换为您自己的视频文件链接 -->
+      <source src="https://videos.pexels.com/video-files/853877/853877-hd.mp4" type="video/mp4">
+      您的浏览器不支持视频播放。
+    </video>
   </div>
+
+  <!-- 内容浮层，所有交互元素都在这里 -->
+  <div class="content-overlay">
+    
+    <header class="site-header">
+      <h1 class="main-title">暗域</h1>
+      <p class="subtitle">Athen Drakmvese</p>
+    </header>
+
+    <main class="main-content">
+      <!-- 交互入口：天地人 -->
+      <nav class="doorway-nav">
+        {doorways.map(door => (
+          <a href={door.href} class="interaction-point" title={door.description}>{door.name}</a>
+        ))}
+      </nav>
+    </main>
+
+    <!-- 声音控制按钮 -->
+    <div id="sound-toggle" class="sound-control" title="开启声音">🔇</div>
+
+  </div>
+
 </body>
 </html>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const soundToggle = document.getElementById('sound-toggle');
+    const video = document.getElementById('bg-video');
+    let isMuted = true;
+
+    soundToggle.addEventListener('click', () => {
+      video.muted = !video.muted;
+      isMuted = video.muted;
+      if (isMuted) {
+        soundToggle.textContent = '🔇';
+        soundToggle.title = '开启声音';
+      } else {
+        soundToggle.textContent = '🔊';
+        soundToggle.title = '静音';
+      }
+    });
+  });
+</script>
+
 <style is:global>
+  /* 全局重置，为我们的场景做准备 */
   body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    background-color: #030408;
-    color: #a9a9a9;
     font-family: var(--font-serif);
+    color: #fff; /* 默认文字颜色改为白色，以适应深色背景 */
   }
 </style>
 
 <style>
-  /* 场景容器，所有3D效果的父级 */
-  .scene-container {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    perspective: 1500px;
-  }
-
-  /* --- 背景元素 --- */
-  .night-sky {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+  /* 背景视频样式 */
+  .video-background {
+    position: fixed;
     top: 0;
     left: 0;
-    z-index: 1;
-  }
-  .moon {
-    position: absolute;
-    top: 15%;
-    right: 20%;
-    width: 70px;
-    height: 70px;
-    background: #f5f3ce;
-    border-radius: 50%;
-    box-shadow: 0 0 50px #f5f3ce, 0 0 100px #f5f3ce, inset -10px 0 15px rgba(0,0,0,0.2);
-  }
-  .stars {
-    background-image:
-      radial-gradient(1px 1px at 20px 30px, white, transparent),
-      radial-gradient(1px 1px at 40px 70px, white, transparent),
-      radial-gradient(1px 1px at 50px 160px, white, transparent),
-      radial-gradient(1px 1px at 90px 40px, white, transparent),
-      radial-gradient(2px 2px at 130px 80px, white, transparent),
-      radial-gradient(1px 1px at 160px 120px, white, transparent);
-    background-repeat: repeat;
-    background-size: 200px 200px;
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    opacity: 0.6;
-    animation: twinkle 60s linear infinite;
-  }
-  .nebula {
-    position: absolute;
     width: 100%;
     height: 100%;
-    background: radial-gradient(ellipse at 70% 30%, rgba(80, 60, 150, 0.2), transparent 50%);
+    z-index: -1; /* 确保它在最底层 */
+    overflow: hidden;
+  }
+  #bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 视频铺满整个容器 */
   }
 
-  /* --- 前景元素 --- */
-  .ground {
-    position: absolute;
-    bottom: -40%;
-    width: 400%;
-    height: 100%;
-    background: radial-gradient(ellipse at 50% 0%, #f5f5f5, #dcdcdc 80%);
-    border-radius: 50%;
-    transform: rotateX(80deg);
-    z-index: 10;
-  }
-  .scholar-silhouette {
-    position: absolute;
-    width: 160px;
-    height: 420px;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(20%);
-    z-index: 15;
-  }
-  .scholar-cape {
-    width: 100%;
-    height: 100%;
-    background: #05050a;
-    border-radius: 80px 80px 0 0;
-    box-shadow: 0 0 20px 5px #05050a; /* 增加轮廓的深邃感 */
-  }
-
-  /* --- 中景核心元素 --- */
-  .doorway {
-    position: relative;
-    z-index: 5;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-  }
-  .door {
-    width: 320px;
-    height: 520px;
-    background: #1a110a;
-    border: 1px solid #000;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden; /* 隐藏超出部分的纹理 */
-  }
-  .door-texture {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image:
-        repeating-linear-gradient(0deg, transparent, transparent 49.5%, rgba(0,0,0,0.3) 50%, transparent 50.5%, transparent),
-        repeating-linear-gradient(90deg, transparent, transparent 49.5%, rgba(0,0,0,0.3) 50%, transparent 50.5%, transparent);
-    background-size: 100px 100px;
-    opacity: 0.1;
-  }
-  .main-rune {
-    font-size: 5rem;
-    color: var(--color-accent-purple);
-    text-shadow: 0 0 10px var(--color-accent-purple), 0 0 30px var(--color-accent-purple);
-    animation: pulse 5s infinite ease-in-out;
-    cursor: pointer;
-    text-decoration: none;
-    z-index: 2;
-  }
-  .door-frame {
-    position: absolute;
-    width: 380px;
-    height: 550px;
-    border: 15px solid #2d2016;
-    border-radius: 5px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.5);
-    background-image: linear-gradient(to right, #2d2016, #4d3a2b, #2d2016);
-  }
-  .door-interactions {
-    position: absolute;
-    right: -70px;
-    top: 50%;
-    transform: translateY(-50%);
+  /* 内容浮层样式 */
+  .content-overlay {
+    width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    justify-content: space-between; /* 顶部、中间、底部对齐 */
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3); /* 一层淡淡的黑色遮罩，让文字更清晰 */
+    padding: 3rem;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  /* 顶部标题样式 */
+  .site-header {
+    animation: fadeInDown 1.5s ease;
+  }
+  .main-title {
+    font-size: 5rem;
+    font-weight: normal;
+    letter-spacing: 1em;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    margin: 0;
+    padding-left: 1em; /* 修正字间距带来的偏移 */
+  }
+  .subtitle {
+    font-size: 1rem;
+    color: #ccc;
+    letter-spacing: 0.2em;
+  }
+
+  /* 中间交互导航 */
+  .main-content {
+    animation: fadeIn 2s ease;
+  }
+  .doorway-nav {
+    display: flex;
+    gap: 30px;
   }
   .interaction-point {
     font-family: var(--font-sans);
-    color: #888;
-    border: 1px solid #555;
-    padding: 10px;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
-    background: rgba(26, 17, 10, 0.5);
+    padding: 15px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px); /* 毛玻璃效果 */
+    transition: all 0.3s ease;
   }
   .interaction-point:hover {
     color: #fff;
-    background: var(--color-accent-blue);
-    border-color: var(--color-accent-blue);
-    box-shadow: 0 0 15px var(--color-accent-blue);
-    transform: translateX(-5px);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
   }
   
-  /* --- 页脚 --- */
-  .site-footer {
-    position: absolute;
-    bottom: 20px;
+  /* 声音控制按钮 */
+  .sound-control {
+    position: fixed;
+    bottom: 30px;
     right: 30px;
-    color: #666;
-    font-family: var(--font-sans);
-    font-size: 0.8rem;
-    z-index: 20;
+    font-size: 1.5rem;
+    cursor: pointer;
+    background: rgba(0,0,0,0.3);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+  }
+  .sound-control:hover {
+    opacity: 1;
+    transform: scale(1.1);
   }
 
-  /* --- 动画 --- */
-  @keyframes pulse {
-    0%, 100% { opacity: 0.7; text-shadow: 0 0 8px var(--color-accent-purple), 0 0 25px var(--color-accent-purple); }
-    50% { opacity: 1; text-shadow: 0 0 15px var(--color-accent-purple), 0 0 40px var(--color-accent-purple); }
+  /* 简单的淡入动画 */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
-  @keyframes twinkle {
-    from { background-position: 0 0; }
-    to { background-position: -10000px 5000px; }
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 </style>
-```
-
-### **改动说明：我们做了什么“精装修”？**
-
-1.  **为大门添加质感**：我加入了一个新的 `.door-texture` 层，用CSS的渐变画出了类似木板拼接的纹理，让门不再是一个平面的色块。
-2.  **强化门框细节**：为 `.door-frame` 添加了渐变背景，模拟木头在光线下的不同反光。
-3.  **优化行者剪影**：为 `.scholar-silhouette` 的内部元素增加了更深的阴影，让剪影的轮廓更突出、更具神秘感。
-4.  **丰富雪地光影**：为 `.ground` 的背景色改为了径向渐变，模拟月光照射在雪地中心比较亮、四周较暗的效果。
-5.  **增强符文光效**：优化了 `@keyframes pulse` 动画，让符文的“呼吸”感更强、光晕更柔和。
-
----
-### **下一步：部署并审阅**
-
-请您用这份全新的代码，再次**替换**您的 `index.astro` 文件，然后**保存并推送到GitHub**。
-
-等待Vercel部署完成后，刷新您的网站。
-
-这一次，我相信您会看到一个更接近我们最终构想的、细节更丰富、光影更深邃的“暗域”之门。
-
-请您审阅。如果还有任何不满意的地方，我们继续雕琢，直到它成为您心中完美的

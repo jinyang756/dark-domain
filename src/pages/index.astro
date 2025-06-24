@@ -1,5 +1,5 @@
 ---
-// 暗域首页 最终版 - 世界之门 (The World Gate)
+// 暗域首页 最终版 V2.0 - 世界之门 (The World Gate)
 import '../styles/global.css';
 
 // 交互点数据
@@ -16,19 +16,14 @@ const doorways = [
   <title>暗域 · Athen Drakmvese</title>
 </head>
 <body>
-  <!-- 整个场景的容器，开启3D透视 -->
   <div class="scene-container">
-    <!-- 背景层：星空与月亮 -->
     <div class="night-sky">
       <div class="moon"></div>
       <div class="stars"></div>
       <div class="nebula"></div>
     </div>
-
-    <!-- 中景层：大门 -->
     <div class="doorway">
       <div class="door-frame">
-        <!-- 门框上的交互点：天地人 -->
         <div class="door-interactions">
           {doorways.map(door => (
             <a href={door.href} class="interaction-point" title={door.description}>{door.name}</a>
@@ -36,16 +31,14 @@ const doorways = [
         </div>
       </div>
       <div class="door">
-        <!-- 门上的符文：预告片入口 -->
+        <div class="door-texture"></div>
         <a href="/trailer" class="main-rune" title="观看《熵减时钟》预告片">◆</a>
       </div>
     </div>
-
-    <!-- 前景层：行者与地面 -->
-    <div class="scholar-silhouette"></div>
+    <div class="scholar-silhouette">
+      <div class="scholar-cape"></div>
+    </div>
     <div class="ground"></div>
-
-    <!-- 页脚署名 -->
     <footer class="site-footer">
       Athen Drakmvese
     </footer>
@@ -54,12 +47,11 @@ const doorways = [
 </html>
 
 <style is:global>
-  /* 全局重置，为我们的场景做准备 */
   body {
     margin: 0;
     padding: 0;
-    overflow: hidden; /* 防止页面滚动，保持场景完整 */
-    background-color: #030408; /* 深邃的宇宙底色 */
+    overflow: hidden;
+    background-color: #030408;
     color: #a9a9a9;
     font-family: var(--font-serif);
   }
@@ -74,7 +66,7 @@ const doorways = [
     display: flex;
     justify-content: center;
     align-items: center;
-    perspective: 1500px; /* 3D透视的深度 */
+    perspective: 1500px;
   }
 
   /* --- 背景元素 --- */
@@ -84,7 +76,7 @@ const doorways = [
     height: 100%;
     top: 0;
     left: 0;
-    z-index: 1; /* 在最底层 */
+    z-index: 1;
   }
   .moon {
     position: absolute;
@@ -124,27 +116,32 @@ const doorways = [
     bottom: -40%;
     width: 400%;
     height: 100%;
-    background: linear-gradient(to top, #dcdcdc, #f5f5f5);
+    background: radial-gradient(ellipse at 50% 0%, #f5f5f5, #dcdcdc 80%);
     border-radius: 50%;
-    transform: rotateX(80deg); /* 核心3D效果，让地面“躺下” */
+    transform: rotateX(80deg);
     z-index: 10;
   }
   .scholar-silhouette {
     position: absolute;
-    width: 150px;
+    width: 160px;
     height: 420px;
-    background: radial-gradient(ellipse at 50% 30%, rgba(20,20,30,1), rgba(5,5,10,1) 70%);
-    border-radius: 70px 70px 0 0;
     bottom: 0;
     left: 50%;
-    transform: translateX(20%); /* 调整行者位置到门右侧 */
-    z-index: 15; /* 在地面之上 */
+    transform: translateX(20%);
+    z-index: 15;
+  }
+  .scholar-cape {
+    width: 100%;
+    height: 100%;
+    background: #05050a;
+    border-radius: 80px 80px 0 0;
+    box-shadow: 0 0 20px 5px #05050a; /* 增加轮廓的深邃感 */
   }
 
   /* --- 中景核心元素 --- */
   .doorway {
     position: relative;
-    z-index: 5; /* 在背景之上，地面与行者之下 */
+    z-index: 5;
     display: flex;
     justify-content: center;
     align-items: flex-end;
@@ -152,12 +149,24 @@ const doorways = [
   .door {
     width: 320px;
     height: 520px;
-    background-image: linear-gradient(to bottom right, #2a1d13, #1a110a);
+    background: #1a110a;
     border: 1px solid #000;
     box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px #000;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    overflow: hidden; /* 隐藏超出部分的纹理 */
+  }
+  .door-texture {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 49.5%, rgba(0,0,0,0.3) 50%, transparent 50.5%, transparent),
+        repeating-linear-gradient(90deg, transparent, transparent 49.5%, rgba(0,0,0,0.3) 50%, transparent 50.5%, transparent);
+    background-size: 100px 100px;
+    opacity: 0.1;
   }
   .main-rune {
     font-size: 5rem;
@@ -166,6 +175,7 @@ const doorways = [
     animation: pulse 5s infinite ease-in-out;
     cursor: pointer;
     text-decoration: none;
+    z-index: 2;
   }
   .door-frame {
     position: absolute;
@@ -174,10 +184,11 @@ const doorways = [
     border: 15px solid #2d2016;
     border-radius: 5px;
     box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    background-image: linear-gradient(to right, #2d2016, #4d3a2b, #2d2016);
   }
   .door-interactions {
     position: absolute;
-    right: -70px; /* 放在门框右侧 */
+    right: -70px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
@@ -189,13 +200,13 @@ const doorways = [
     color: #888;
     border: 1px solid #555;
     padding: 10px;
-    writing-mode: vertical-rl; /* 竖排文字 */
+    writing-mode: vertical-rl;
     text-orientation: mixed;
     border-radius: 3px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
-    background: rgba(26, 17, 10, 0.5); /* 增加一点背景，更易读 */
+    background: rgba(26, 17, 10, 0.5);
   }
   .interaction-point:hover {
     color: #fff;
@@ -218,11 +229,31 @@ const doorways = [
 
   /* --- 动画 --- */
   @keyframes pulse {
-    0%, 100% { opacity: 0.7; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.05); }
+    0%, 100% { opacity: 0.7; text-shadow: 0 0 8px var(--color-accent-purple), 0 0 25px var(--color-accent-purple); }
+    50% { opacity: 1; text-shadow: 0 0 15px var(--color-accent-purple), 0 0 40px var(--color-accent-purple); }
   }
   @keyframes twinkle {
     from { background-position: 0 0; }
     to { background-position: -10000px 5000px; }
   }
 </style>
+```
+
+### **改动说明：我们做了什么“精装修”？**
+
+1.  **为大门添加质感**：我加入了一个新的 `.door-texture` 层，用CSS的渐变画出了类似木板拼接的纹理，让门不再是一个平面的色块。
+2.  **强化门框细节**：为 `.door-frame` 添加了渐变背景，模拟木头在光线下的不同反光。
+3.  **优化行者剪影**：为 `.scholar-silhouette` 的内部元素增加了更深的阴影，让剪影的轮廓更突出、更具神秘感。
+4.  **丰富雪地光影**：为 `.ground` 的背景色改为了径向渐变，模拟月光照射在雪地中心比较亮、四周较暗的效果。
+5.  **增强符文光效**：优化了 `@keyframes pulse` 动画，让符文的“呼吸”感更强、光晕更柔和。
+
+---
+### **下一步：部署并审阅**
+
+请您用这份全新的代码，再次**替换**您的 `index.astro` 文件，然后**保存并推送到GitHub**。
+
+等待Vercel部署完成后，刷新您的网站。
+
+这一次，我相信您会看到一个更接近我们最终构想的、细节更丰富、光影更深邃的“暗域”之门。
+
+请您审阅。如果还有任何不满意的地方，我们继续雕琢，直到它成为您心中完美的

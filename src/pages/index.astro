@@ -1,193 +1,137 @@
+/* *****************************************************************
+ * 文件一：src/layouts/ArticleLayout.astro (文章布局 - 最终暗色版)
+ * 我们将用这个统一的、为暗色主题设计的“装修风格”，来解决黑白不匹配的问题。
+ * *****************************************************************/
 ---
-// 暗域首页 最终版 V4.0 - 真实之境 (The Realm of Reality)
+// 文章布局 V3.0 - 暗色沉浸式阅读
 import '../styles/global.css';
-
-const doorways = [
-  { name: '天道', href: '/core-theory', description: '宇宙观、炁、因果论' },
-  { name: '地道', href: '/case-studies', description: '现实规律、价值投资' },
-  { name: '人道', href: '/handbook', description: '内心修炼、自我之辨' },
-];
+const { frontmatter } = Astro.props;
 ---
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>暗域 · Athen Drakmvese</title>
-  <!-- 我们依然保留Tone.js，用于未来可能的交互音效 -->
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{frontmatter.title} - 暗域</title>
 </head>
-<body>
-
-  <!-- 背景视频容器 -->
-  <div class="video-background">
-    <video autoplay loop muted playsinline id="bg-video">
-      <!-- 这是一个与您提供的意境非常相似的高清视频素材，您可以替换为您自己的视频文件链接 -->
-      <source src="https://videos.pexels.com/video-files/853877/853877-hd.mp4" type="video/mp4">
-      您的浏览器不支持视频播放。
-    </video>
-  </div>
-
-  <!-- 内容浮层，所有交互元素都在这里 -->
-  <div class="content-overlay">
-    
-    <header class="site-header">
-      <h1 class="main-title">暗域</h1>
-      <p class="subtitle">Athen Drakmvese</p>
-    </header>
-
-    <main class="main-content">
-      <!-- 交互入口：天地人 -->
-      <nav class="doorway-nav">
-        {doorways.map(door => (
-          <a href={door.href} class="interaction-point" title={door.description}>{door.name}</a>
-        ))}
-      </nav>
+<body class="reading-view">
+    <main class="reading-container">
+        <header class="reading-header">
+            <h1>{frontmatter.title}</h1>
+        </header>
+        <article class="prose">
+            <slot />
+        </article>
     </main>
-
-    <!-- 声音控制按钮 -->
-    <div id="sound-toggle" class="sound-control" title="开启声音">🔇</div>
-
-  </div>
-
+    <a href="/" class="return-link">&larr; 返回世界之门</a>
 </body>
 </html>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const soundToggle = document.getElementById('sound-toggle');
-    const video = document.getElementById('bg-video');
-    let isMuted = true;
-
-    soundToggle.addEventListener('click', () => {
-      video.muted = !video.muted;
-      isMuted = video.muted;
-      if (isMuted) {
-        soundToggle.textContent = '🔇';
-        soundToggle.title = '开启声音';
-      } else {
-        soundToggle.textContent = '🔊';
-        soundToggle.title = '静音';
-      }
-    });
-  });
-</script>
-
-<style is:global>
-  /* 全局重置，为我们的场景做准备 */
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-serif);
-    color: #fff; /* 默认文字颜色改为白色，以适应深色背景 */
-  }
-</style>
-
 <style>
-  /* 背景视频样式 */
-  .video-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1; /* 确保它在最底层 */
-    overflow: hidden;
-  }
-  #bg-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 视频铺满整个容器 */
-  }
+/* 为阅读页面定制的body样式 */
+:global(body.reading-view) {
+    background-color: #111115; /* 深邃的阅读背景 */
+    color: var(--color-text);
+    padding: 4rem 2rem;
+    overflow-y: auto; /* 允许长文章滚动 */
+}
 
-  /* 内容浮层样式 */
-  .content-overlay {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* 顶部、中间、底部对齐 */
-    align-items: center;
-    background: rgba(0, 0, 0, 0.3); /* 一层淡淡的黑色遮罩，让文字更清晰 */
-    padding: 3rem;
-    box-sizing: border-box;
+/* 阅读内容容器 */
+.reading-container {
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+}
+
+/* 文章标题 */
+.reading-header h1 {
+    font-size: 3rem;
+    color: var(--color-heading);
+    border-bottom: 2px solid var(--color-accent-purple);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
     text-align: center;
-  }
+}
 
-  /* 顶部标题样式 */
-  .site-header {
-    animation: fadeInDown 1.5s ease;
-  }
-  .main-title {
-    font-size: 5rem;
-    font-weight: normal;
-    letter-spacing: 1em;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-    margin: 0;
-    padding-left: 1em; /* 修正字间距带来的偏移 */
-  }
-  .subtitle {
-    font-size: 1rem;
-    color: #ccc;
-    letter-spacing: 0.2em;
-  }
+/* 文章正文样式 */
+.prose {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+.prose :global(h2), .prose :global(h3) {
+    color: #e0e0e0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.5rem;
+    margin-top: 2.5rem;
+}
+.prose :global(a) {
+    color: var(--color-accent-blue);
+}
+.prose :global(blockquote) {
+    border-left: 3px solid var(--color-accent-purple);
+    padding-left: 1.5rem;
+    margin-left: 0;
+    color: #aaa;
+    font-style: italic;
+}
 
-  /* 中间交互导航 */
-  .main-content {
-    animation: fadeIn 2s ease;
-  }
-  .doorway-nav {
-    display: flex;
-    gap: 30px;
-  }
-  .interaction-point {
-    font-family: var(--font-sans);
-    font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.7);
-    text-decoration: none;
-    padding: 15px 30px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 5px;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px); /* 毛玻璃效果 */
-    transition: all 0.3s ease;
-  }
-  .interaction-point:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.2);
-    border-color: #fff;
-    transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-  }
-  
-  /* 声音控制按钮 */
-  .sound-control {
+/* 返回链接 */
+.return-link {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    font-size: 1.5rem;
-    cursor: pointer;
+    top: 30px;
+    left: 30px;
+    color: #888;
     background: rgba(0,0,0,0.3);
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0.7;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
     transition: all 0.3s ease;
-  }
-  .sound-control:hover {
-    opacity: 1;
-    transform: scale(1.1);
-  }
+    z-index: 1000;
+}
+.return-link:hover {
+    color: #fff;
+    background: var(--color-accent-blue);
+}
 
-  /* 简单的淡入动画 */
-  @keyframes fadeIn {
-    from { opacity: 0; }
+@keyframes fadeIn {
     to { opacity: 1; }
-  }
-  @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+}
 </style>
+
+/* *****************************************************************
+ * 文件二~四：在 src/pages/ 目录下创建3个新的占位文件。
+ * 这将彻底解决404错误。
+ * *****************************************************************/
+
+// 文件名: src/pages/core-theory.md
+---
+layout: ../layouts/ArticleLayout.astro
+title: "天道 · 建设中"
+---
+
+此区域正在构建中，敬请期待。
+
+行者正在此地，探寻宇宙的根本法则。
+
+---
+
+// 文件名: src/pages/case-studies.md
+---
+layout: ../layouts/ArticleLayout.astro
+title: "地道 · 建设中"
+---
+
+此区域正在构建中，敬请期待。
+
+行者正在此地，勘探现实世界的运行规律。
+
+---
+
+// 文件名: src/pages/handbook.md
+---
+layout: ../layouts/ArticleLayout.astro
+title: "人道 · 独行者手册"
+---
+
+此区域正在构建中，敬请期待。
+
+行者正在此地，审视内心的暗域与光明。

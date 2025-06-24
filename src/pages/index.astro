@@ -1,7 +1,8 @@
 ---
-// 暗域首页 V4.0 - “声音与生命”
+// 暗域首页 最终版 - 世界之门 (The World Gate)
 import '../styles/global.css';
 
+// 交互点数据
 const doorways = [
   { name: '天道', href: '/core-theory', description: '宇宙观、炁、因果论' },
   { name: '地道', href: '/case-studies', description: '现实规律、价值投资' },
@@ -13,37 +14,38 @@ const doorways = [
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>暗域 · Athen Drakmvese</title>
-  <!-- 步骤一：引入Tone.js音频库 -->
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
 </head>
 <body>
+  <!-- 整个场景的容器，开启3D透视 -->
   <div class="scene-container">
-    <!-- ... (您已有的场景HTML代码保持不变) ... -->
+    <!-- 背景层：星空与月亮 -->
     <div class="night-sky">
       <div class="moon"></div>
       <div class="stars"></div>
       <div class="nebula"></div>
     </div>
+
+    <!-- 中景层：大门 -->
     <div class="doorway">
       <div class="door-frame">
+        <!-- 门框上的交互点：天地人 -->
         <div class="door-interactions">
           {doorways.map(door => (
-            <a href={door.href} class="interaction-point interactive-link" title={door.description}>{door.name}</a>
+            <a href={door.href} class="interaction-point" title={door.description}>{door.name}</a>
           ))}
         </div>
       </div>
       <div class="door">
-        <a href="/trailer" class="main-rune interactive-link" title="观看《熵减时钟》预告片">◆</a>
+        <!-- 门上的符文：预告片入口 -->
+        <a href="/trailer" class="main-rune" title="观看《熵减时钟》预告片">◆</a>
       </div>
     </div>
+
+    <!-- 前景层：行者与地面 -->
     <div class="scholar-silhouette"></div>
     <div class="ground"></div>
 
-    <!-- 步骤二：添加声音控制按钮 -->
-    <div id="sound-toggle" class="sound-control" title="开启声音">
-      🔇
-    </div>
-    
+    <!-- 页脚署名 -->
     <footer class="site-footer">
       Athen Drakmvese
     </footer>
@@ -51,101 +53,176 @@ const doorways = [
 </body>
 </html>
 
-<!-- 步骤三：添加全新的JavaScript逻辑 -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // 获取所有可交互的链接
-    const interactiveLinks = document.querySelectorAll('.interactive-link');
-    const soundToggle = document.getElementById('sound-toggle');
-
-    let isAudioReady = false;
-    let isMuted = true;
-
-    // 创建交互点击音效
-    const clickSynth = new Tone.MembraneSynth({
-      pitchDecay: 0.01,
-      octaves: 2,
-      envelope: {
-        attack: 0.001,
-        decay: 0.2,
-        sustain: 0,
-      }
-    }).toDestination();
-
-    // 创建背景音乐合成器和效果器
-    const ambientSynth = new Tone.FMSynth({
-      harmonicity: 1.5,
-      modulationIndex: 10,
-      envelope: {
-        attack: 0.2,
-        decay: 1,
-      },
-    }).toDestination();
-    const reverb = new Tone.Reverb(8).toDestination();
-    ambientSynth.connect(reverb);
-    
-    // 背景音乐的音符序列
-    const notes = ['C2', 'G2', 'Eb3', 'Bb2'];
-    let noteIndex = 0;
-
-    // 背景音乐循环播放逻辑
-    const ambientLoop = new Tone.Loop(time => {
-      const note = notes[noteIndex % notes.length];
-      ambientSynth.triggerAttackRelease(note, '2n', time);
-      noteIndex++;
-    }, '4n').start(0); // 4n代表四分音符，即每个节拍触发一次
-
-    // 绑定交互点击音效
-    interactiveLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        if (!isMuted) {
-          clickSynth.triggerAttackRelease('C1', '8n');
-        }
-      });
-    });
-
-    // 声音总开关逻辑
-    soundToggle.addEventListener('click', async () => {
-      if (!isAudioReady) {
-        await Tone.start();
-        console.log('Audio is ready');
-        isAudioReady = true;
-        Tone.Transport.start(); // 启动Tone.js的全局时钟
-      }
-
-      if (isMuted) {
-        Tone.Destination.mute = false;
-        soundToggle.textContent = '🔊';
-        soundToggle.title = '静音';
-      } else {
-        Tone.Destination.mute = true;
-        soundToggle.textContent = '🔇';
-        soundToggle.title = '开启声音';
-      }
-      isMuted = !isMuted;
-    });
-  });
-</script>
+<style is:global>
+  /* 全局重置，为我们的场景做准备 */
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* 防止页面滚动，保持场景完整 */
+    background-color: #030408; /* 深邃的宇宙底色 */
+    color: #a9a9a9;
+    font-family: var(--font-serif);
+  }
+</style>
 
 <style>
-  /* 步骤四：为新元素添加样式 */
-  .sound-control {
-    position: fixed;
-    bottom: 20px;
-    left: 30px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: all 0.3s ease;
-    z-index: 20;
+  /* 场景容器，所有3D效果的父级 */
+  .scene-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1500px; /* 3D透视的深度 */
   }
-  .sound-control:hover {
-    opacity: 1;
-    transform: scale(1.2);
+
+  /* --- 背景元素 --- */
+  .night-sky {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1; /* 在最底层 */
+  }
+  .moon {
+    position: absolute;
+    top: 15%;
+    right: 20%;
+    width: 70px;
+    height: 70px;
+    background: #f5f3ce;
+    border-radius: 50%;
+    box-shadow: 0 0 50px #f5f3ce, 0 0 100px #f5f3ce, inset -10px 0 15px rgba(0,0,0,0.2);
+  }
+  .stars {
+    background-image:
+      radial-gradient(1px 1px at 20px 30px, white, transparent),
+      radial-gradient(1px 1px at 40px 70px, white, transparent),
+      radial-gradient(1px 1px at 50px 160px, white, transparent),
+      radial-gradient(1px 1px at 90px 40px, white, transparent),
+      radial-gradient(2px 2px at 130px 80px, white, transparent),
+      radial-gradient(1px 1px at 160px 120px, white, transparent);
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0.6;
+    animation: twinkle 60s linear infinite;
+  }
+  .nebula {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at 70% 30%, rgba(80, 60, 150, 0.2), transparent 50%);
+  }
+
+  /* --- 前景元素 --- */
+  .ground {
+    position: absolute;
+    bottom: -40%;
+    width: 400%;
+    height: 100%;
+    background: linear-gradient(to top, #dcdcdc, #f5f5f5);
+    border-radius: 50%;
+    transform: rotateX(80deg); /* 核心3D效果，让地面“躺下” */
+    z-index: 10;
+  }
+  .scholar-silhouette {
+    position: absolute;
+    width: 150px;
+    height: 420px;
+    background: radial-gradient(ellipse at 50% 30%, rgba(20,20,30,1), rgba(5,5,10,1) 70%);
+    border-radius: 70px 70px 0 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(20%); /* 调整行者位置到门右侧 */
+    z-index: 15; /* 在地面之上 */
+  }
+
+  /* --- 中景核心元素 --- */
+  .doorway {
+    position: relative;
+    z-index: 5; /* 在背景之上，地面与行者之下 */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+  .door {
+    width: 320px;
+    height: 520px;
+    background-image: linear-gradient(to bottom right, #2a1d13, #1a110a);
+    border: 1px solid #000;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .main-rune {
+    font-size: 5rem;
+    color: var(--color-accent-purple);
+    text-shadow: 0 0 10px var(--color-accent-purple), 0 0 30px var(--color-accent-purple);
+    animation: pulse 5s infinite ease-in-out;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .door-frame {
+    position: absolute;
+    width: 380px;
+    height: 550px;
+    border: 15px solid #2d2016;
+    border-radius: 5px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  }
+  .door-interactions {
+    position: absolute;
+    right: -70px; /* 放在门框右侧 */
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .interaction-point {
+    font-family: var(--font-sans);
+    color: #888;
+    border: 1px solid #555;
+    padding: 10px;
+    writing-mode: vertical-rl; /* 竖排文字 */
+    text-orientation: mixed;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    background: rgba(26, 17, 10, 0.5); /* 增加一点背景，更易读 */
+  }
+  .interaction-point:hover {
+    color: #fff;
+    background: var(--color-accent-blue);
+    border-color: var(--color-accent-blue);
+    box-shadow: 0 0 15px var(--color-accent-blue);
+    transform: translateX(-5px);
   }
   
-  /* 为所有交互链接添加一个通用类名，方便JS选择 */
-  .interaction-point, .main-rune {
-    /* 这里可以添加通用交互样式，如果需要的话 */
+  /* --- 页脚 --- */
+  .site-footer {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    color: #666;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    z-index: 20;
+  }
+
+  /* --- 动画 --- */
+  @keyframes pulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+  @keyframes twinkle {
+    from { background-position: 0 0; }
+    to { background-position: -10000px 5000px; }
   }
 </style>

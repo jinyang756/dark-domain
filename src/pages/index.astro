@@ -1,137 +1,250 @@
-/* *****************************************************************
- * 文件一：src/layouts/ArticleLayout.astro (文章布局 - 最终暗色版)
- * 我们将用这个统一的、为暗色主题设计的“装修风格”，来解决黑白不匹配的问题。
- * *****************************************************************/
 ---
-// 文章布局 V3.0 - 暗色沉浸式阅读
+// 暗域首页 最终版 - 世界之门 (The World Gate)
 import '../styles/global.css';
-const { frontmatter } = Astro.props;
+
+// 交互点数据
+const doorways = [
+  { name: '天道', href: '/core-theory', description: '宇宙观、炁、因果论' },
+  { name: '地道', href: '/case-studies', description: '现实规律、价值投资' },
+  { name: '人道', href: '/handbook', description: '内心修炼、自我之辨' },
+];
 ---
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{frontmatter.title} - 暗域</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>暗域 · Athen Drakmvese</title>
 </head>
-<body class="reading-view">
-    <main class="reading-container">
-        <header class="reading-header">
-            <h1>{frontmatter.title}</h1>
-        </header>
-        <article class="prose">
-            <slot />
-        </article>
-    </main>
-    <a href="/" class="return-link">&larr; 返回世界之门</a>
+<body>
+  <!-- 整个场景的容器，开启3D透视 -->
+  <div class="scene-container">
+    <!-- 背景层：星空与月亮 -->
+    <div class="night-sky">
+      <div class="moon"></div>
+      <div class="stars"></div>
+      <div class="nebula"></div>
+    </div>
+
+    <!-- 中景层：大门 -->
+    <div class="doorway">
+      <div class="door-frame">
+        <!-- 门框上的交互点：天地人 -->
+        <div class="door-interactions">
+          {doorways.map(door => (
+            <a href={door.href} class="interaction-point" title={door.description}>{door.name}</a>
+          ))}
+        </div>
+      </div>
+      <div class="door">
+        <div class="door-texture"></div>
+        <!-- 门上的符文：预告片入口 -->
+        <a href="/trailer" class="main-rune" title="观看《熵减时钟》预告片">◆</a>
+      </div>
+    </div>
+
+    <!-- 前景层：行者与地面 -->
+    <div class="scholar-silhouette">
+      <div class="scholar-cape"></div>
+    </div>
+    <div class="ground"></div>
+
+    <!-- 页脚署名 -->
+    <footer class="site-footer">
+      Athen Drakmvese
+    </footer>
+  </div>
 </body>
 </html>
-<style>
-/* 为阅读页面定制的body样式 */
-:global(body.reading-view) {
-    background-color: #111115; /* 深邃的阅读背景 */
-    color: var(--color-text);
-    padding: 4rem 2rem;
-    overflow-y: auto; /* 允许长文章滚动 */
-}
 
-/* 阅读内容容器 */
-.reading-container {
-    max-width: 800px;
-    margin: 0 auto;
-    opacity: 0;
-    animation: fadeIn 1s ease forwards;
-}
-
-/* 文章标题 */
-.reading-header h1 {
-    font-size: 3rem;
-    color: var(--color-heading);
-    border-bottom: 2px solid var(--color-accent-purple);
-    padding-bottom: 1rem;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-/* 文章正文样式 */
-.prose {
-    font-size: 1.1rem;
-    line-height: 1.8;
-}
-.prose :global(h2), .prose :global(h3) {
-    color: #e0e0e0;
-    border-bottom: 1px solid #444;
-    padding-bottom: 0.5rem;
-    margin-top: 2.5rem;
-}
-.prose :global(a) {
-    color: var(--color-accent-blue);
-}
-.prose :global(blockquote) {
-    border-left: 3px solid var(--color-accent-purple);
-    padding-left: 1.5rem;
-    margin-left: 0;
-    color: #aaa;
-    font-style: italic;
-}
-
-/* 返回链接 */
-.return-link {
-    position: fixed;
-    top: 30px;
-    left: 30px;
-    color: #888;
-    background: rgba(0,0,0,0.3);
-    padding: 10px 15px;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
-.return-link:hover {
-    color: #fff;
-    background: var(--color-accent-blue);
-}
-
-@keyframes fadeIn {
-    to { opacity: 1; }
-}
+<style is:global>
+  /* 全局重置，为我们的场景做准备 */
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* 防止页面滚动，保持场景完整 */
+    background-color: #030408; /* 深邃的宇宙底色 */
+    color: #a9a9a9;
+    font-family: var(--font-serif);
+  }
 </style>
 
-/* *****************************************************************
- * 文件二~四：在 src/pages/ 目录下创建3个新的占位文件。
- * 这将彻底解决404错误。
- * *****************************************************************/
+<style>
+  /* 场景容器，所有3D效果的父级 */
+  .scene-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1500px; /* 3D透视的深度 */
+  }
 
-// 文件名: src/pages/core-theory.md
----
-layout: ../layouts/ArticleLayout.astro
-title: "天道 · 建设中"
----
+  /* --- 背景元素 --- */
+  .night-sky {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1; /* 在最底层 */
+  }
+  .moon {
+    position: absolute;
+    top: 15%;
+    right: 20%;
+    width: 70px;
+    height: 70px;
+    background: #f5f3ce;
+    border-radius: 50%;
+    box-shadow: 0 0 50px #f5f3ce, 0 0 100px #f5f3ce, inset -10px 0 15px rgba(0,0,0,0.2);
+  }
+  .stars {
+    background-image:
+      radial-gradient(1px 1px at 20px 30px, white, transparent),
+      radial-gradient(1px 1px at 40px 70px, white, transparent),
+      radial-gradient(1px 1px at 50px 160px, white, transparent),
+      radial-gradient(1px 1px at 90px 40px, white, transparent),
+      radial-gradient(2px 2px at 130px 80px, white, transparent),
+      radial-gradient(1px 1px at 160px 120px, white, transparent);
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0.6;
+    animation: twinkle 60s linear infinite;
+  }
+  .nebula {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at 70% 30%, rgba(80, 60, 150, 0.2), transparent 50%);
+  }
 
-此区域正在构建中，敬请期待。
+  /* --- 前景元素 --- */
+  .ground {
+    position: absolute;
+    bottom: -40%;
+    width: 400%;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, #f5f5f5, #dcdcdc 80%);
+    border-radius: 50%;
+    transform: rotateX(80deg); /* 核心3D效果，让地面“躺下” */
+    z-index: 10;
+  }
+  .scholar-silhouette {
+    position: absolute;
+    width: 160px;
+    height: 420px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(20%); /* 调整行者位置到门右侧 */
+    z-index: 15; /* 在地面之上 */
+  }
+    .scholar-cape {
+    width: 100%;
+    height: 100%;
+    background: #05050a;
+    border-radius: 80px 80px 0 0;
+    box-shadow: 0 0 20px 5px #05050a; /* 增加轮廓的深邃感 */
+  }
 
-行者正在此地，探寻宇宙的根本法则。
+  /* --- 中景核心元素 --- */
+  .doorway {
+    position: relative;
+    z-index: 5; /* 在背景之上，地面与行者之下 */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+  .door {
+    width: 320px;
+    height: 520px;
+    background-image: linear-gradient(to bottom right, #2a1d13, #1a110a);
+    border: 1px solid #000;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+     position: relative;
+    overflow: hidden; /* 隐藏超出部分的纹理 */
+  }
+  .door-texture {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 49.5%, rgba(0,0,0,0.3) 50%, transparent 50.5%, transparent),
+        repeating-linear-gradient(90deg, transparent, transparent 49.5%, rgba(0,0,0,0.3) 50%, transparent 50.5%, transparent);
+    background-size: 100px 100px;
+    opacity: 0.1;
+  }
+  .main-rune {
+    font-size: 5rem;
+    color: var(--color-accent-purple);
+    text-shadow: 0 0 10px var(--color-accent-purple), 0 0 30px var(--color-accent-purple);
+    animation: pulse 5s infinite ease-in-out;
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 2;
+  }
+  .door-frame {
+    position: absolute;
+    width: 380px;
+    height: 550px;
+    border: 15px solid #2d2016;
+    border-radius: 5px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    background-image: linear-gradient(to right, #2d2016, #4d3a2b, #2d2016);
+  }
+  .door-interactions {
+    position: absolute;
+    right: -70px; /* 放在门框右侧 */
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .interaction-point {
+    font-family: var(--font-sans);
+    color: #888;
+    border: 1px solid #555;
+    padding: 10px;
+    writing-mode: vertical-rl; /* 竖排文字 */
+    text-orientation: mixed;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    background: rgba(26, 17, 10, 0.5); /* 增加一点背景，更易读 */
+  }
+  .interaction-point:hover {
+    color: #fff;
+    background: var(--color-accent-blue);
+    border-color: var(--color-accent-blue);
+    box-shadow: 0 0 15px var(--color-accent-blue);
+    transform: translateX(-5px);
+  }
+  
+  /* --- 页脚 --- */
+  .site-footer {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    color: #666;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    z-index: 20;
+  }
 
----
-
-// 文件名: src/pages/case-studies.md
----
-layout: ../layouts/ArticleLayout.astro
-title: "地道 · 建设中"
----
-
-此区域正在构建中，敬请期待。
-
-行者正在此地，勘探现实世界的运行规律。
-
----
-
-// 文件名: src/pages/handbook.md
----
-layout: ../layouts/ArticleLayout.astro
-title: "人道 · 独行者手册"
----
-
-此区域正在构建中，敬请期待。
-
-行者正在此地，审视内心的暗域与光明。
+  /* --- 动画 --- */
+  @keyframes pulse {
+    0%, 100% { opacity: 0.7; text-shadow: 0 0 8px var(--color-accent-purple), 0 0 25px var(--color-accent-purple); }
+    50% { opacity: 1; text-shadow: 0 0 15px var(--color-accent-purple), 0 0 40px var(--color-accent-purple); }
+  }
+  @keyframes twinkle {
+    from { background-position: 0 0; }
+    to { background-position: -10000px 5000px; }
+  }
+</style>

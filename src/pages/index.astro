@@ -1,9 +1,10 @@
 ---
-// 暗域首页 最终版 V6.4 - 最终修正
+// 暗域首页 最终版 V9.0 - 电子书架与最终布局
+// 核心修正：更新导航名称和链接
 const doorways = [
-  { id: 1, name: '天道', href: '/core-theory', description: '宇宙观、炁、因果论' },
+  { id: 1, name: '公告', href: '/announcements', description: '网站公告与更新' },
   { id: 2, name: '地道', href: '/case-studies', description: '现实规律、价值投资' },
-  { id: 3, name: '人道', href: '/handbook', description: '内心修炼、自我之辨' },
+  { id: 3, name: '暗域独行者感悟', href: '/handbook', description: '内心修炼、自我之辨' },
 ];
 ---
 <html lang="zh-CN">
@@ -12,49 +13,58 @@ const doorways = [
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>暗域 · Athen Drakmvese</title>
   
+  <!-- 引入 Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 引入 Font Awesome -->
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 引入 Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
   
   <script is:inline>
-    // is:inline 告诉Astro这是一段客户端脚本，并进行优化
-    if (typeof window.tailwind !== 'undefined') {
-      window.tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              dark: '#0F1115',
-            },
-            fontFamily: {
-              serif: ['"Noto Serif SC"', 'serif'],
-              sans: ['Inter', 'sans-serif'],
-            },
-            animation: {
-              'fade-in': 'fadeIn 1.5s ease-out forwards',
-              'fade-in-down': 'fadeInDown 1.5s ease-out forwards',
-            },
-            keyframes: {
-              fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-              fadeInDown: { '0%': { opacity: '0', transform: 'translateY(-20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+    // 配置 Tailwind (修正：将其放入is:inline的script中，确保在Tailwind加载后执行)
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof window.tailwind !== 'undefined') {
+        window.tailwind.config = {
+          theme: {
+            extend: {
+              colors: { dark: '#0F1115' },
+              fontFamily: {
+                serif: ['"Noto Serif SC"', 'serif'],
+                sans: ['Inter', 'sans-serif'],
+              },
+              animation: {
+                'fade-in': 'fadeIn 1.5s ease-out forwards',
+                'fade-in-down': 'fadeInDown 1.5s ease-out forwards',
+              },
+              keyframes: {
+                fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                fadeInDown: { '0%': { opacity: '0', transform: 'translateY(-20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+              }
             }
-          },
-        }
-      };
-    }
+          }
+        };
+      }
+    });
   </script>
   
   <style type="text/tailwindcss">
     @layer utilities {
-      .text-shadow { text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+      .text-shadow {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+      }
       .glass-effect {
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         background-color: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.2);
       }
-      .glass-hover { transition: all 0.3s ease; }
+      .glass-hover {
+        transition: all 0.3s ease;
+      }
       .glass-hover:hover {
         background-color: rgba(255, 255, 255, 0.15);
         border-color: rgba(255, 255, 255, 0.5);
@@ -64,81 +74,124 @@ const doorways = [
     }
   </style>
 </head>
-<body class="bg-dark font-serif text-white min-h-screen overflow-hidden">
+<body class="bg-dark font-serif text-white min-h-screen overflow-x-hidden">
   <!-- 背景视频 -->
   <div class="fixed inset-0 z-[-2] overflow-hidden">
     <video autoplay loop muted playsinline id="bg-video" class="w-full h-full object-cover">
       <source src="https://assets.mixkit.co/videos/preview/mixkit-full-moon-shining-over-mountains-22776-large.mp4" type="video/mp4">
-      您的浏览器不支持视频播放。
     </video>
   </div>
   
-  <!-- 半透明遮罩 -->
-  <div class="fixed inset-0 bg-black/40 z-[-1]"></div>
+  <div class="fixed inset-0 bg-black/50 z-[-1]"></div>
   
-  <!-- 内容区域 -->
-  <div class="min-h-screen flex flex-col items-center justify-between p-8 relative z-10">
-    <!-- 头部 -->
-    <header class="text-center animate-fade-in-down">
-      <h1 class="text-[clamp(2.5rem,10vw,5rem)] font-serif font-normal tracking-[clamp(0.5em,2vw,1em)] ml-[clamp(0.5em,2vw,1em)] text-shadow opacity-90">暗域</h1>
-      <p class="mt-4 text-[clamp(0.8rem,3vw,1.2rem)] font-sans text-gray-300 tracking-widest opacity-80">Athen Drakmvese</p>
-    </header>
-    
-    <!-- 主要内容 -->
-    <main class="w-full max-w-4xl flex flex-col items-center justify-center animate-fade-in" style="animation-delay: 0.3s;">
-      <!-- **核心修正**：我们将交互逻辑移交给下面的脚本，而不是使用onclick -->
+  <div class="min-h-screen flex flex-col items-center justify-between p-6 md:p-10 relative z-10">
+    <!-- 序章部分 -->
+    <section class="w-full max-w-4xl mb-10 md:mb-16 animate-fade-in-down">
+      <div class="glass-effect rounded-2xl p-6 md:p-8">
+        <h2 class="text-2xl md:text-3xl font-serif mb-4 text-center text-white/90">序章</h2>
+        <p class="text-sm md:text-base leading-relaxed text-gray-300 text-justify">
+          我的人生，是一场白雪茫茫的黑夜。这里很安静，安静得只能听见雪落下的声音，和我自己的心跳。这片雪原的中央，曾经有一棵树，枝繁叶茂。我以为它能撑起整个天地，为我抵御所有的风霜。后来我才知道，它早已空了心。那颗被带走的树心，是她。树心空了，风雪就从那个洞口灌了进来，一年又一年。在无数次快要被掩埋、被冻结的瞬间，在那些水深火热的挣扎里，我唯一能抓住的，是我自己的手。我救自己，一次，又一次，万万次。于是，我就这样，成了一个走进了门，却找不到出去的门的人。这片无垠的雪原，就是我的房间，我的世界。我不敢去想那扇门在哪里，因为我更怕知道它通向何方。也许门外是更深的黑夜，也许，根本就没有门。所以，我选择在这里，点一盏灯，将我走过的路，变成文字。如果你也碰巧走进了这里，不必急着寻找出路。可以坐下，一起看看这片黑夜里的雪。
+        </p>
+      </div>
+    </section>
+
+    <!-- 导航部分 -->
+    <main class="w-full max-w-4xl flex flex-col items-center justify-center mb-12 animate-fade-in" style="animation-delay: 0.3s;">
       <nav class="flex flex-col md:flex-row gap-6 md:gap-10">
         {doorways.map(door => (
-          <a 
-            href={door.href} 
-            class="doorway-link glass-effect glass-hover rounded-xl py-5 px-8 text-center text-[clamp(1.2rem,4vw,1.8rem)] font-serif" 
-            title={door.description} 
-            data-voice-id={door.id}
-          >
+          <a href={door.href} class="doorway-link glass-effect glass-hover rounded-xl py-5 px-8 text-center text-[clamp(1.2rem,4vw,1.8rem)] font-serif" title={door.description} data-voice-id={door.id}>
             {door.name}
           </a>
         ))}
       </nav>
     </main>
+
+    <!-- 电子书架部分 - 可折叠区域 -->
+    <section class="w-full max-w-6xl mt-4 animate-fade-in" style="animation-delay: 0.6s;">
+      <div class="glass-effect rounded-2xl overflow-hidden">
+        <div class="flex justify-between items-center p-4 md:p-6 bg-white/5 cursor-pointer" id="bookshelf-toggle">
+          <h2 class="text-xl md:text-2xl font-serif text-shadow">我的文字世界</h2>
+          <button class="text-white/80 hover:text-white transition-colors duration-300 text-2xl" id="bookshelf-arrow">
+            <i class="fa fa-chevron-down"></i>
+          </button>
+        </div>
+        
+        <div class="p-4 md:p-8" id="bookshelf-content">
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
+            <!-- 书籍 1: 熵减时钟 -->
+             <a href="/novel/entropy-clock" class="group block">
+              <div class="aspect-[2/3] bg-gray-800 rounded-md p-4 flex flex-col justify-end relative overflow-hidden border border-gray-700 hover:border-white/50 transition-all duration-300 transform hover:-translate-y-2">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <h3 class="relative text-lg font-serif font-bold text-white z-10">《熵减时钟》</h3>
+                <p class="relative text-sm text-gray-400 z-10">连载中</p>
+              </div>
+            </a>
+            <!-- 添加新书的按钮 -->
+            <div class="group aspect-[2/3] rounded-md border-2 border-dashed border-white/30 bg-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/20 transition-colors duration-300 transform hover:-translate-y-2">
+              <i class="fa fa-plus-circle text-4xl text-white/60 group-hover:text-white transition-colors duration-300"></i>
+              <p class="mt-3 text-sm text-white/70 font-medium group-hover:text-white transition-colors duration-300">添加新书</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 页脚部分 -->
+    <footer class="w-full mt-10 md:mt-16 animate-fade-in" style="animation-delay: 0.9s;">
+       <div class="text-center text-sm text-white/60">
+        <p>&copy; 2025 暗域 · Athen Drakmvese. 保留所有权利.</p>
+       </div>
+    </footer>
     
-    <!-- 声音控制 -->
+    <!-- 声音控制按钮 -->
     <button id="sound-toggle" class="fixed bottom-6 right-6 w-12 h-12 rounded-full flex items-center justify-center bg-dark/30 hover:bg-dark/50 transition-all duration-300 opacity-70 hover:opacity-100 text-2xl" title="开启声音">
       <i class="fa fa-volume-off"></i>
     </button>
     
-    <!-- 预加载的人声音频 -->
-    <audio id="voice-1" preload="auto">
-      <source src="https://assets.mixkit.co/sfx/preview/mixkit-voice-male-saying-stand-among-heaven-and-earth-2883.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="voice-2" preload="auto">
-      <source src="https://assets.mixkit.co/sfx/preview/mixkit-voice-male-saying-heaven-and-earth-2884.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="voice-3" preload="auto">
-      <source src="https://assets.mixkit.co/sfx/preview/mixkit-voice-male-saying-i-think-therefore-i-am-2885.mp3" type="audio/mpeg">
-    </audio>
+    <!-- 语音音频 -->
+    <audio id="voice-1" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-voice-male-saying-stand-among-heaven-and-earth-2883.mp3" type="audio/mpeg"></audio>
+    <audio id="voice-2" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-voice-male-saying-heaven-and-earth-2884.mp3" type="audio/mpeg"></audio>
+    <audio id="voice-3" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-voice-male-saying-i-think-therefore-i-am-2885.mp3" type="audio/mpeg"></audio>
   </div>
 
   <script is:inline>
-    // **核心修正**：将所有交互逻辑放在一个大的事件监听器中，这是Astro的最佳实践
+    function playVoice(id) {
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+      
+      const audio = document.getElementById(`voice-${id}`);
+      const video = document.getElementById('bg-video');
+      if (audio instanceof HTMLAudioElement && video instanceof HTMLVideoElement && !video.muted) {
+        audio.play().catch(e => console.error("Audio play failed:", e));
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const soundToggle = document.getElementById('sound-toggle');
       const video = document.getElementById('bg-video');
       const doorwayLinks = document.querySelectorAll('.doorway-link');
+      const bookshelfToggle = document.getElementById('bookshelf-toggle');
+      const bookshelfContent = document.getElementById('bookshelf-content');
+      const bookshelfArrow = document.getElementById('bookshelf-arrow');
 
-      // **播放语音提示的函数**
-      function playVoice(id) {
-        document.querySelectorAll('audio').forEach(audio => {
-          audio.pause();
-          audio.currentTime = 0;
-        });
-        
-        const audio = document.getElementById(`voice-${id}`);
-        if (audio instanceof HTMLAudioElement && video instanceof HTMLVideoElement && !video.muted) {
-          audio.play().catch(e => console.error("Audio play failed:", e));
-        }
+      // 书架折叠/展开功能
+      if (bookshelfToggle && bookshelfContent && bookshelfArrow) {
+          let isBookshelfExpanded = true;
+          bookshelfToggle.addEventListener('click', () => {
+            isBookshelfExpanded = !isBookshelfExpanded;
+            if (isBookshelfExpanded) {
+              bookshelfContent.style.display = 'block';
+              bookshelfArrow.innerHTML = '<i class="fa fa-chevron-down"></i>';
+            } else {
+              bookshelfContent.style.display = 'none';
+              bookshelfArrow.innerHTML = '<i class="fa fa-chevron-up"></i>';
+            }
+          });
       }
 
-      // **为所有交互按钮绑定点击事件**
+      // 为所有交互按钮绑定点击事件
       doorwayLinks.forEach(link => {
         link.addEventListener('click', function(event) {
           const voiceId = this.getAttribute('data-voice-id');
@@ -148,7 +201,7 @@ const doorways = [
         });
       });
 
-      // **声音控制**
+      // 声音控制
       if (video instanceof HTMLVideoElement && soundToggle instanceof HTMLElement) {
         video.addEventListener('canplay', () => {
           soundToggle.style.display = 'flex';
@@ -159,9 +212,9 @@ const doorways = [
           video.muted = !isCurrentlyMuted;
 
           document.querySelectorAll('audio').forEach(audio => {
-              if (audio instanceof HTMLAudioElement) {
-                audio.muted = !isCurrentlyMuted;
-              }
+            if (audio instanceof HTMLAudioElement) {
+              audio.muted = !isCurrentlyMuted;
+            }
           });
 
           if (video.muted) {
@@ -173,7 +226,7 @@ const doorways = [
           }
         });
         
-        // **视频片段循环逻辑**
+        // 视频片段循环逻辑
         const startLoopTime = 3; 
         const endLoopTime = 15;
         
@@ -192,4 +245,3 @@ const doorways = [
   </script>
 </body>
 </html>
-```

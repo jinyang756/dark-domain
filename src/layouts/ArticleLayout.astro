@@ -22,73 +22,20 @@ const { frontmatter } = Astro.props;
 </body>
 </html>
 <style>
-/* 为阅读页面定制的body样式 */
 :global(body.reading-view) {
-    background-color: #111115; /* 深邃的阅读背景 */
-    color: var(--color-text);
+    background-color: #111115;
+    color: #ccc;
     padding: 4rem 2rem;
-    overflow-y: auto; /* 允许长文章滚动 */
+    overflow-y: auto;
+    font-family: var(--font-serif);
 }
-
-/* 阅读内容容器 */
-.reading-container {
-    max-width: 800px;
-    margin: 0 auto;
-    opacity: 0;
-    animation: fadeIn 1s ease forwards;
-}
-
-/* 文章标题 */
-.reading-header h1 {
-    font-size: 3rem;
-    color: var(--color-heading);
-    border-bottom: 2px solid var(--color-accent-purple);
-    padding-bottom: 1rem;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-/* 文章正文样式 */
-.prose {
-    font-size: 1.1rem;
-    line-height: 1.8;
-}
-.prose :global(h2), .prose :global(h3) {
-    color: #e0e0e0;
-    border-bottom: 1px solid #444;
-    padding-bottom: 0.5rem;
-    margin-top: 2.5rem;
-}
-.prose :global(a) {
-    color: var(--color-accent-blue);
-}
-.prose :global(blockquote) {
-    border-left: 3px solid var(--color-accent-purple);
-    padding-left: 1.5rem;
-    margin-left: 0;
-    color: #aaa;
-    font-style: italic;
-}
-
-/* 返回链接 */
-.return-link {
-    position: fixed;
-    top: 30px;
-    left: 30px;
-    color: #888;
-    background: rgba(0,0,0,0.3);
-    padding: 10px 15px;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
-.return-link:hover {
-    color: #fff;
-    background: var(--color-accent-blue);
-}
-
-@keyframes fadeIn {
-    to { opacity: 1; }
-}
+.reading-container { max-width: 800px; margin: 0 auto; opacity: 0; animation: fadeIn 1s ease forwards; }
+.reading-header h1 { font-size: 3rem; color: #fff; border-bottom: 2px solid #a988d5; padding-bottom: 1rem; margin-bottom: 2rem; text-align: center; font-family: var(--font-serif); }
+.prose { font-size: 1.1rem; line-height: 1.8; }
+.prose :global(h2), .prose :global(h3) { color: #e0e0e0; border-bottom: 1px solid #444; padding-bottom: 0.5rem; margin-top: 2.5rem; font-family: var(--font-sans); }
+.prose :global(a) { color: #6c8eef; }
+.prose :global(blockquote) { border-left: 3px solid #a988d5; padding-left: 1.5rem; margin-left: 0; color: #aaa; font-style: italic; }
+.return-link { position: fixed; top: 30px; left: 30px; color: #888; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 5px; text-decoration: none; transition: all 0.3s ease; z-index: 1000; font-family: var(--font-sans); }
+.return-link:hover { color: #fff; background: #6c8eef; }
+@keyframes fadeIn { to { opacity: 1; } }
 </style>

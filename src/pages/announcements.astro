@@ -1,0 +1,28 @@
+---
+// "公告"页面 (announcements.astro)
+import Layout from '../layouts/ArticleLayout.astro';
+---
+<Layout title="开篇 · 心声">
+    <div class="text-center">
+        <p class="text-lg text-gray-400 mb-8">
+            “我的人生，是一场白雪茫茫的黑夜...”
+        </p>
+
+        <div class="audio-player-container max-w-lg mx-auto bg-gray-900/50 p-6 rounded-xl border border-white/10 shadow-lg">
+            <h3 class="text-xl font-serif text-white mb-2">序章</h3>
+            <p class="text-sm text-gray-500 mb-4">Athen Drakmvese</p>
+            <audio controls class="w-full" preload="auto">
+                <source src="/prologue.mp3" type="audio/mpeg">
+                您的浏览器不支持音频播放。
+            </audio>
+        </div>
+
+        <div class="mt-12 text-gray-600">
+            <p>如果你也碰巧走进了这里，不必急着寻找出路。</p>
+            <p>可以坐下，一起看看这片黑夜里的雪。</p>
+        </div>
+    </div>
+</Layout>
+<style>
+    audio { border-radius: 50px; }
+</style>

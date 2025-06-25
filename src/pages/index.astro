@@ -1,5 +1,16 @@
+/* *****************************************************************
+ * 《“暗域”完整项目最终代码包》
+ * 版本：Ω (Omega) - 最终修正版
+ * 请严格按照以下文件结构和代码，更新您项目中的所有对应文件。
+ * 这将一次性地、正确地构建出我们共同构想的最终世界。
+ * *****************************************************************/
+
+/* *****************************************************************
+ * 文件一：src/pages/index.astro (最终的、正确的首页)
+ * 这是我们网站的唯一入口，以《序章》和“电子书架”为核心，并搭载了双主题曲播放器。
+ * *****************************************************************/
 ---
-// 暗域首页 最终版 V10.0 - 书架核心
+// 暗域首页 最终版 - 书架核心 & 双主题曲
 ---
 <html lang="zh-CN">
 <head>
@@ -7,7 +18,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>暗域 · Athen Drakmvese</title>
   
-  <!-- 引入所有必要的样式和字体库 -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,29 +26,27 @@
   
   <script is:inline>
     // Tailwind 配置
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof window.tailwind !== 'undefined') {
-        window.tailwind.config = {
-          theme: {
-            extend: {
-              colors: { dark: '#0F1115' },
-              fontFamily: {
-                serif: ['"Noto Serif SC"', 'serif'],
-                sans: ['Inter', 'sans-serif'],
-              },
-              animation: {
-                'fade-in': 'fadeIn 1.5s ease-out forwards',
-                'fade-in-down': 'fadeInDown 1s ease-out forwards',
-              },
-              keyframes: {
-                fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                fadeInDown: { '0%': { opacity: '0', transform: 'translateY(-20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-              }
+    window.tailwind = {
+      config: {
+        theme: {
+          extend: {
+            colors: { dark: '#0F1115' },
+            fontFamily: {
+              serif: ['"Noto Serif SC"', 'serif'],
+              sans: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'fade-in': 'fadeIn 1.5s ease-out forwards',
+              'fade-in-down': 'fadeInDown 1s ease-out forwards',
+            },
+            keyframes: {
+              fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+              fadeInDown: { '0%': { opacity: '0', transform: 'translateY(-20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
             }
           }
-        };
+        }
       }
-    });
+    };
   </script>
   
   <style type="text/tailwindcss">
@@ -57,11 +65,47 @@
         transform: translateY(-8px);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       }
+      /* 播放器样式 */
+      .player-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.1);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s ease;
+      }
+      .player-btn:hover { background: rgba(255,255,255,0.2); }
+      .track-selector {
+        display: flex;
+        margin-left: 10px;
+        background: rgba(0,0,0,0.3);
+        border-radius: 50px;
+      }
+      .track-btn {
+        padding: 8px 18px;
+        background: transparent;
+        border: none;
+        color: #aaa;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+      }
+      .track-btn.active {
+        background: #6c8eef;
+        color: white;
+        box-shadow: 0 0 10px #6c8eef;
+      }
     }
   </style>
 </head>
 <body class="bg-dark font-serif text-white min-h-screen overflow-x-hidden">
-  <!-- 背景视频 -->
   <div class="fixed inset-0 z-[-2] overflow-hidden">
     <video autoplay loop muted playsinline id="bg-video" class="w-full h-full object-cover">
       <source src="https://assets.mixkit.co/videos/preview/mixkit-full-moon-shining-over-mountains-22776-large.mp4" type="video/mp4">
@@ -71,7 +115,6 @@
   <div class="fixed inset-0 bg-black/60 z-[-1]"></div>
   
   <div class="min-h-screen flex flex-col items-center justify-center p-6 md:p-10 relative z-10">
-    <!-- 序章部分 -->
     <section class="w-full max-w-4xl mb-12 animate-fade-in-down">
       <div class="glass-effect rounded-2xl p-6 md:p-8">
         <h2 class="text-2xl md:text-3xl font-serif mb-4 text-center text-white/90">序章</h2>
@@ -81,16 +124,18 @@
       </div>
     </section>
 
-    <!-- 电子书架部分 -->
     <main class="w-full max-w-6xl animate-fade-in" style="animation-delay: 0.3s;">
       <div class="glass-effect rounded-2xl overflow-hidden">
-        <div class="p-4 md:p-6 bg-white/5">
+        <div class="p-4 md:p-6 bg-white/5 flex justify-between items-center">
           <h2 class="text-xl md:text-2xl font-serif text-shadow text-center">我的文字世界</h2>
+          <a href="/announcements" class="text-white/70 hover:text-white transition-colors text-sm font-sans flex items-center" title="收听开篇《心声》">
+            <i class="fa fa-bullhorn mr-2"></i>
+            <span>开篇公告</span>
+          </a>
         </div>
         
         <div class="p-4 md:p-8">
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
-            <!-- 书籍 1: 熵减时钟 -->
              <a href="/novel/entropy-clock" class="group block book-cover-style">
               <div class="aspect-[2/3] bg-gray-800 rounded-md p-4 flex flex-col justify-end relative overflow-hidden border border-gray-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
@@ -98,7 +143,6 @@
                 <p class="relative text-sm text-gray-400 z-10">连载中</p>
               </div>
             </a>
-            <!-- **核心修改**：新增“暗域独行者感悟” -->
             <a href="/musings" class="group block book-cover-style">
               <div class="aspect-[2/3] bg-gray-800 rounded-md p-4 flex flex-col justify-end relative overflow-hidden border border-gray-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
@@ -106,55 +150,109 @@
                 <p class="relative text-sm text-gray-400 z-10">连载中</p>
               </div>
             </a>
-            <!-- 添加新书的按钮 -->
-            <div class="group aspect-[2/3] rounded-md border-2 border-dashed border-white/30 bg-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/20 transition-colors duration-300 book-cover-style">
+            <a href="/dashboard" class="group aspect-[2/3] rounded-md border-2 border-dashed border-white/30 bg-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/20 transition-colors duration-300 book-cover-style" title="创作后台">
               <i class="fa fa-plus-circle text-4xl text-white/60 group-hover:text-white transition-colors duration-300"></i>
               <p class="mt-3 text-sm text-white/70 font-medium group-hover:text-white transition-colors duration-300">添加新书</p>
-            </div>
+            </a>
           </div>
         </div>
       </div>
     </main>
     
-    <!-- 声音控制按钮 -->
-    <button id="sound-toggle" class="fixed bottom-6 right-6 w-12 h-12 rounded-full flex items-center justify-center bg-dark/30 hover:bg-dark/50 transition-all duration-300 opacity-70 hover:opacity-100 text-2xl" title="开启声音">
-      <i class="fa fa-volume-off"></i>
-    </button>
+    <div id="music-player" class="fixed bottom-6 right-6 flex items-center bg-black/50 backdrop-blur-md border border-white/20 rounded-full p-2 shadow-lg">
+        <button id="play-pause-btn" class="player-btn" title="播放/暂停"><i class="fa fa-play"></i></button>
+        <div class="track-selector">
+            <button id="select-male" class="track-btn active" title="播放《暗域心声》">心声</button>
+            <button id="select-female" class="track-btn" title="播放《暗域徽记》">徽记</button>
+        </div>
+    </div>
+    
+    <audio id="male-voice" loop preload="auto"><source src="/voice-male.mp3" type="audio/mpeg"></audio>
+    <audio id="female-voice" loop preload="auto"><source src="/voice-female.mp3" type="audio/mpeg"></audio>
   </div>
 
   <script is:inline>
     document.addEventListener('DOMContentLoaded', () => {
-      const soundToggle = document.getElementById('sound-toggle');
+      // 视频循环逻辑
       const video = document.getElementById('bg-video');
-
-      if (video instanceof HTMLVideoElement && soundToggle instanceof HTMLElement) {
-        video.addEventListener('canplay', () => {
-          soundToggle.style.display = 'flex';
-        });
-        
-        soundToggle.addEventListener('click', () => {
-          video.muted = !video.muted;
-          if (video.muted) {
-            soundToggle.innerHTML = '<i class="fa fa-volume-off"></i>';
-            soundToggle.title = '开启声音';
-          } else {
-            soundToggle.innerHTML = '<i class="fa fa-volume-up"></i>';
-            soundToggle.title = '静音';
-          }
-        });
-        
+      if (video instanceof HTMLVideoElement) {
         const startLoopTime = 3; 
         const endLoopTime = 15;
-        
-        video.addEventListener('timeupdate', () => {
+        const loop = () => {
           if (video.currentTime >= endLoopTime) {
             video.currentTime = startLoopTime;
             video.play();
           }
-        });
-        
+        };
+        video.addEventListener('timeupdate', loop);
         video.addEventListener('loadedmetadata', () => {
           video.currentTime = startLoopTime;
+        });
+        // 确保背景视频静音，让主题曲播放器控制声音
+        video.muted = true;
+      }
+
+      // 音频播放器逻辑
+      const playPauseBtn = document.getElementById('play-pause-btn');
+      const selectMaleBtn = document.getElementById('select-male');
+      const selectFemaleBtn = document.getElementById('select-female');
+      const maleVoice = document.getElementById('male-voice');
+      const femaleVoice = document.getElementById('female-voice');
+
+      if (playPauseBtn && selectMaleBtn && selectFemaleBtn && maleVoice instanceof HTMLAudioElement && femaleVoice instanceof HTMLAudioElement) {
+        let activeTrack = maleVoice;
+        let isPlaying = false;
+        let isAudioReady = false;
+
+        function playActiveTrack() {
+          if (!isAudioReady) return;
+          const inactiveTrack = (activeTrack === maleVoice) ? femaleVoice : maleVoice;
+          inactiveTrack.pause();
+          
+          activeTrack.play().catch(e => console.error("Audio play failed:", e));
+          isPlaying = true;
+          playPauseBtn.innerHTML = '<i class="fa fa-pause"></i>';
+        }
+
+        function pauseAllTracks() {
+          maleVoice.pause();
+          femaleVoice.pause();
+          isPlaying = false;
+          playPauseBtn.innerHTML = '<i class="fa fa-play"></i>';
+        }
+
+        async function initAudio() {
+          if (isAudioReady) return;
+          isAudioReady = true;
+        }
+
+        playPauseBtn.addEventListener('click', async () => {
+          await initAudio();
+          if (isPlaying) {
+            pauseAllTracks();
+          } else {
+            playActiveTrack();
+          }
+        });
+
+        selectMaleBtn.addEventListener('click', async () => {
+          await initAudio();
+          if (activeTrack !== maleVoice) {
+            activeTrack = maleVoice;
+            selectMaleBtn.classList.add('active');
+            selectFemaleBtn.classList.remove('active');
+            if (isPlaying) playActiveTrack();
+          }
+        });
+
+        selectFemaleBtn.addEventListener('click', async () => {
+          await initAudio();
+          if (activeTrack !== femaleVoice) {
+            activeTrack = femaleVoice;
+            selectFemaleBtn.classList.add('active');
+            selectMaleBtn.classList.remove('active');
+            if (isPlaying) playActiveTrack();
+          }
         });
       }
     });

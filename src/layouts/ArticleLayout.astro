@@ -1,18 +1,21 @@
 ---
-// 文章布局 V3.0 - 暗色沉浸式阅读
+// 文章布局 V4.0 - 最终修正版
 import '../styles/global.css';
-const { frontmatter } = Astro.props;
+
+// **核心修正**：让布局更智能，能同时处理来自.md文件和.astro文件的标题
+const { frontmatter, title } = Astro.props;
+const pageTitle = frontmatter?.title || title || '无题'; // 优先使用frontmatter的标题，否则使用直接传递的title
 ---
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>{frontmatter.title} - 暗域</title>
+    <title>{pageTitle} - 暗域</title>
 </head>
 <body class="reading-view">
     <main class="reading-container">
         <header class="reading-header">
-            <h1>{frontmatter.title}</h1>
+            <h1>{pageTitle}</h1>
         </header>
         <article class="prose">
             <slot />
@@ -22,11 +25,12 @@ const { frontmatter } = Astro.props;
 </body>
 </html>
 <style>
+/* 为阅读页面定制的body样式 */
 :global(body.reading-view) {
-    background-color: #111115;
+    background-color: #111115; /* 深邃的阅读背景 */
     color: #ccc;
     padding: 4rem 2rem;
-    overflow-y: auto;
+    overflow-y: auto; /* 允许长文章滚动 */
     font-family: var(--font-serif);
 }
 .reading-container { max-width: 800px; margin: 0 auto; opacity: 0; animation: fadeIn 1s ease forwards; }

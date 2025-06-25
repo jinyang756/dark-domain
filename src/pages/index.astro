@@ -1,11 +1,5 @@
 ---
-// 暗域首页 最终版 V9.0 - 电子书架与最终布局
-// 核心修正：更新导航名称和链接
-const doorways = [
-  { id: 1, name: '公告', href: '/announcements', description: '网站公告与更新' },
-  { id: 2, name: '地道', href: '/case-studies', description: '现实规律、价值投资' },
-  { id: 3, name: '暗域独行者感悟', href: '/handbook', description: '内心修炼、自我之辨' },
-];
+// 暗域首页 最终版 V10.0 - 书架核心
 ---
 <html lang="zh-CN">
 <head>
@@ -13,19 +7,15 @@ const doorways = [
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>暗域 · Athen Drakmvese</title>
   
-  <!-- 引入 Tailwind CSS -->
+  <!-- 引入所有必要的样式和字体库 -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- 引入 Font Awesome -->
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  
-  <!-- 引入 Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
   
   <script is:inline>
-    // 配置 Tailwind (修正：将其放入is:inline的script中，确保在Tailwind加载后执行)
+    // Tailwind 配置
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof window.tailwind !== 'undefined') {
         window.tailwind.config = {
@@ -38,7 +28,7 @@ const doorways = [
               },
               animation: {
                 'fade-in': 'fadeIn 1.5s ease-out forwards',
-                'fade-in-down': 'fadeInDown 1.5s ease-out forwards',
+                'fade-in-down': 'fadeInDown 1s ease-out forwards',
               },
               keyframes: {
                 fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
@@ -53,23 +43,19 @@ const doorways = [
   
   <style type="text/tailwindcss">
     @layer utilities {
-      .text-shadow {
-        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-      }
+      .text-shadow { text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
       .glass-effect {
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        background-color: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        background-color: rgba(20, 22, 28, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
-      .glass-hover {
+      .book-cover-style {
         transition: all 0.3s ease;
       }
-      .glass-hover:hover {
-        background-color: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.5);
-        box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
-        transform: translateY(-5px);
+      .book-cover-style:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       }
     }
   </style>
@@ -82,11 +68,11 @@ const doorways = [
     </video>
   </div>
   
-  <div class="fixed inset-0 bg-black/50 z-[-1]"></div>
+  <div class="fixed inset-0 bg-black/60 z-[-1]"></div>
   
-  <div class="min-h-screen flex flex-col items-center justify-between p-6 md:p-10 relative z-10">
+  <div class="min-h-screen flex flex-col items-center justify-center p-6 md:p-10 relative z-10">
     <!-- 序章部分 -->
-    <section class="w-full max-w-4xl mb-10 md:mb-16 animate-fade-in-down">
+    <section class="w-full max-w-4xl mb-12 animate-fade-in-down">
       <div class="glass-effect rounded-2xl p-6 md:p-8">
         <h2 class="text-2xl md:text-3xl font-serif mb-4 text-center text-white/90">序章</h2>
         <p class="text-sm md:text-base leading-relaxed text-gray-300 text-justify">
@@ -95,128 +81,59 @@ const doorways = [
       </div>
     </section>
 
-    <!-- 导航部分 -->
-    <main class="w-full max-w-4xl flex flex-col items-center justify-center mb-12 animate-fade-in" style="animation-delay: 0.3s;">
-      <nav class="flex flex-col md:flex-row gap-6 md:gap-10">
-        {doorways.map(door => (
-          <a href={door.href} class="doorway-link glass-effect glass-hover rounded-xl py-5 px-8 text-center text-[clamp(1.2rem,4vw,1.8rem)] font-serif" title={door.description} data-voice-id={door.id}>
-            {door.name}
-          </a>
-        ))}
-      </nav>
-    </main>
-
-    <!-- 电子书架部分 - 可折叠区域 -->
-    <section class="w-full max-w-6xl mt-4 animate-fade-in" style="animation-delay: 0.6s;">
+    <!-- 电子书架部分 -->
+    <main class="w-full max-w-6xl animate-fade-in" style="animation-delay: 0.3s;">
       <div class="glass-effect rounded-2xl overflow-hidden">
-        <div class="flex justify-between items-center p-4 md:p-6 bg-white/5 cursor-pointer" id="bookshelf-toggle">
-          <h2 class="text-xl md:text-2xl font-serif text-shadow">我的文字世界</h2>
-          <button class="text-white/80 hover:text-white transition-colors duration-300 text-2xl" id="bookshelf-arrow">
-            <i class="fa fa-chevron-down"></i>
-          </button>
+        <div class="p-4 md:p-6 bg-white/5">
+          <h2 class="text-xl md:text-2xl font-serif text-shadow text-center">我的文字世界</h2>
         </div>
         
-        <div class="p-4 md:p-8" id="bookshelf-content">
+        <div class="p-4 md:p-8">
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
             <!-- 书籍 1: 熵减时钟 -->
-             <a href="/novel/entropy-clock" class="group block">
-              <div class="aspect-[2/3] bg-gray-800 rounded-md p-4 flex flex-col justify-end relative overflow-hidden border border-gray-700 hover:border-white/50 transition-all duration-300 transform hover:-translate-y-2">
+             <a href="/novel/entropy-clock" class="group block book-cover-style">
+              <div class="aspect-[2/3] bg-gray-800 rounded-md p-4 flex flex-col justify-end relative overflow-hidden border border-gray-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                 <h3 class="relative text-lg font-serif font-bold text-white z-10">《熵减时钟》</h3>
                 <p class="relative text-sm text-gray-400 z-10">连载中</p>
               </div>
             </a>
+            <!-- **核心修改**：新增“暗域独行者感悟” -->
+            <a href="/musings" class="group block book-cover-style">
+              <div class="aspect-[2/3] bg-gray-800 rounded-md p-4 flex flex-col justify-end relative overflow-hidden border border-gray-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <h3 class="relative text-lg font-serif font-bold text-white z-10">《暗域独行者感悟》</h3>
+                <p class="relative text-sm text-gray-400 z-10">连载中</p>
+              </div>
+            </a>
             <!-- 添加新书的按钮 -->
-            <div class="group aspect-[2/3] rounded-md border-2 border-dashed border-white/30 bg-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/20 transition-colors duration-300 transform hover:-translate-y-2">
+            <div class="group aspect-[2/3] rounded-md border-2 border-dashed border-white/30 bg-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/20 transition-colors duration-300 book-cover-style">
               <i class="fa fa-plus-circle text-4xl text-white/60 group-hover:text-white transition-colors duration-300"></i>
               <p class="mt-3 text-sm text-white/70 font-medium group-hover:text-white transition-colors duration-300">添加新书</p>
             </div>
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- 页脚部分 -->
-    <footer class="w-full mt-10 md:mt-16 animate-fade-in" style="animation-delay: 0.9s;">
-       <div class="text-center text-sm text-white/60">
-        <p>&copy; 2025 暗域 · Athen Drakmvese. 保留所有权利.</p>
-       </div>
-    </footer>
+    </main>
     
     <!-- 声音控制按钮 -->
     <button id="sound-toggle" class="fixed bottom-6 right-6 w-12 h-12 rounded-full flex items-center justify-center bg-dark/30 hover:bg-dark/50 transition-all duration-300 opacity-70 hover:opacity-100 text-2xl" title="开启声音">
       <i class="fa fa-volume-off"></i>
     </button>
-    
-    <!-- 语音音频 -->
-    <audio id="voice-1" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-voice-male-saying-stand-among-heaven-and-earth-2883.mp3" type="audio/mpeg"></audio>
-    <audio id="voice-2" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-voice-male-saying-heaven-and-earth-2884.mp3" type="audio/mpeg"></audio>
-    <audio id="voice-3" preload="auto"><source src="https://assets.mixkit.co/sfx/preview/mixkit-voice-male-saying-i-think-therefore-i-am-2885.mp3" type="audio/mpeg"></audio>
   </div>
 
   <script is:inline>
-    function playVoice(id) {
-      document.querySelectorAll('audio').forEach(audio => {
-        audio.pause();
-        audio.currentTime = 0;
-      });
-      
-      const audio = document.getElementById(`voice-${id}`);
-      const video = document.getElementById('bg-video');
-      if (audio instanceof HTMLAudioElement && video instanceof HTMLVideoElement && !video.muted) {
-        audio.play().catch(e => console.error("Audio play failed:", e));
-      }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
       const soundToggle = document.getElementById('sound-toggle');
       const video = document.getElementById('bg-video');
-      const doorwayLinks = document.querySelectorAll('.doorway-link');
-      const bookshelfToggle = document.getElementById('bookshelf-toggle');
-      const bookshelfContent = document.getElementById('bookshelf-content');
-      const bookshelfArrow = document.getElementById('bookshelf-arrow');
 
-      // 书架折叠/展开功能
-      if (bookshelfToggle && bookshelfContent && bookshelfArrow) {
-          let isBookshelfExpanded = true;
-          bookshelfToggle.addEventListener('click', () => {
-            isBookshelfExpanded = !isBookshelfExpanded;
-            if (isBookshelfExpanded) {
-              bookshelfContent.style.display = 'block';
-              bookshelfArrow.innerHTML = '<i class="fa fa-chevron-down"></i>';
-            } else {
-              bookshelfContent.style.display = 'none';
-              bookshelfArrow.innerHTML = '<i class="fa fa-chevron-up"></i>';
-            }
-          });
-      }
-
-      // 为所有交互按钮绑定点击事件
-      doorwayLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-          const voiceId = this.getAttribute('data-voice-id');
-          if (voiceId) {
-            playVoice(parseInt(voiceId, 10));
-          }
-        });
-      });
-
-      // 声音控制
       if (video instanceof HTMLVideoElement && soundToggle instanceof HTMLElement) {
         video.addEventListener('canplay', () => {
           soundToggle.style.display = 'flex';
         });
         
         soundToggle.addEventListener('click', () => {
-          const isCurrentlyMuted = video.muted;
-          video.muted = !isCurrentlyMuted;
-
-          document.querySelectorAll('audio').forEach(audio => {
-            if (audio instanceof HTMLAudioElement) {
-              audio.muted = !isCurrentlyMuted;
-            }
-          });
-
+          video.muted = !video.muted;
           if (video.muted) {
             soundToggle.innerHTML = '<i class="fa fa-volume-off"></i>';
             soundToggle.title = '开启声音';
@@ -226,7 +143,6 @@ const doorways = [
           }
         });
         
-        // 视频片段循环逻辑
         const startLoopTime = 3; 
         const endLoopTime = 15;
         

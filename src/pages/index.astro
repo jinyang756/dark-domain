@@ -1,17 +1,18 @@
 ---
-// 暗域首页 最终版 V13.0 - 可折叠书架
+// 暗域首页 最终版 V12.0 - 纯粹书库
+// **核心修正**：书架只包含两本核心著作
 const books = [
   { 
     id: 'entropy-clock', 
     title: "《熵减时钟》", 
     status: "暗域三部曲之一",
-    href: "/novel/entropy-clock" 
+    href: "/novel-entropy-clock" // 链接到小说主页
   },
   {
     id: 'three-realms',
     title: "《暗域三才集》",
     status: "核心思想合集",
-    href: "/philosophy-three-realms"
+    href: "/philosophy-three-realms" // 链接到“天地人”合集主页
   }
 ];
 ---
@@ -29,8 +30,8 @@ const books = [
   
   <script is:inline>
     // Tailwind 配置
-    if (typeof window.tailwind !== 'undefined') {
-      window.tailwind.config = {
+    window.tailwind = {
+      config: {
         theme: {
           extend: {
             colors: { dark: '#0F1115' },
@@ -48,8 +49,8 @@ const books = [
             }
           }
         }
-      };
-    }
+      }
+    };
   </script>
   
   <style type="text/tailwindcss">
@@ -90,20 +91,15 @@ const books = [
       </div>
     </section>
 
-    <!-- 电子书架部分 -->
     <main class="w-full max-w-6xl animate-fade-in" style="animation-delay: 0.3s;">
       <div class="glass-effect rounded-2xl overflow-hidden">
-        <!-- **核心修改**：将标题栏变为可点击的折叠触发器 -->
-        <div id="bookshelf-toggle" class="p-4 md:p-6 bg-white/5 flex justify-between items-center cursor-pointer hover:bg-white/10 transition-colors">
-          <h2 class="text-xl md:text-2xl font-serif text-shadow text-center">我的文字世界</h2>
-          <button id="bookshelf-arrow" class="text-white/80 text-2xl transition-transform duration-300">
-            <i class="fa fa-chevron-down"></i>
-          </button>
+        <div class="p-4 md:p-6 bg-white/5">
+          <h2 class="text-xl md:text-2xl font-serif text-shadow text-center">暗域电子书库</h2>
         </div>
         
-        <!-- **核心修改**：书架内容默认隐藏，并添加过渡效果 -->
-        <div id="bookshelf-content" class="p-4 md:p-8 transition-all duration-500 ease-in-out" style="max-height: 0; padding-top: 0; padding-bottom: 0; overflow: hidden;">
+        <div class="p-4 md:p-8">
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
+            <!-- 动态渲染书架上的书籍 -->
             {books.map(book => (
               <a href={book.href} class="group block book-cover-style">
                 <div class="aspect-[2/3] bg-gray-800 rounded-md p-4 flex flex-col justify-end relative overflow-hidden border border-gray-700">
@@ -113,6 +109,7 @@ const books = [
                 </div>
               </a>
             ))}
+            <!-- 添加新书的按钮 -->
             <a href="/dashboard" class="group aspect-[2/3] rounded-md border-2 border-dashed border-white/30 bg-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/20 transition-colors duration-300 book-cover-style" title="创作后台">
               <i class="fa fa-plus-circle text-4xl text-white/60 group-hover:text-white transition-colors duration-300"></i>
               <p class="mt-3 text-sm text-white/70 font-medium group-hover:text-white transition-colors duration-300">添加新书</p>
@@ -129,40 +126,86 @@ const books = [
 
   <script is:inline>
     document.addEventListener('DOMContentLoaded', () => {
-      // (声音和视频的逻辑保持不变)
       const soundToggle = document.getElementById('sound-toggle');
       const video = document.getElementById('bg-video');
+
       if (video instanceof HTMLVideoElement && soundToggle instanceof HTMLElement) {
-        // ... (省略已有的声音和视频代码)
-      }
-
-      // **新增：书架折叠交互逻辑**
-      const bookshelfToggle = document.getElementById('bookshelf-toggle');
-      const bookshelfContent = document.getElementById('bookshelf-content');
-      const bookshelfArrow = document.getElementById('bookshelf-arrow');
-
-      if (bookshelfToggle && bookshelfContent && bookshelfArrow) {
-        let isBookshelfExpanded = false; // 默认是收起的
+        video.addEventListener('canplay', () => {
+          soundToggle.style.display = 'flex';
+        });
         
-        bookshelfToggle.addEventListener('click', () => {
-          isBookshelfExpanded = !isBookshelfExpanded;
-          
-          if (isBookshelfExpanded) {
-            // 展开
-            bookshelfContent.style.maxHeight = bookshelfContent.scrollHeight + "px";
-            bookshelfContent.style.paddingTop = "1rem"; // 根据你的设计调整
-            bookshelfContent.style.paddingBottom = "2rem";
-            bookshelfArrow.style.transform = "rotate(180deg)";
+        soundToggle.addEventListener('click', () => {
+          video.muted = !video.muted;
+          if (video.muted) {
+            soundToggle.innerHTML = '<i class="fa fa-volume-off"></i>';
+            soundToggle.title = '开启声音';
           } else {
-            // 收起
-            bookshelfContent.style.maxHeight = "0";
-            bookshelfContent.style.paddingTop = "0";
-            bookshelfContent.style.paddingBottom = "0";
-            bookshelfArrow.style.transform = "rotate(0deg)";
+            soundToggle.innerHTML = '<i class="fa fa-volume-up"></i>';
+            soundToggle.title = '静音';
           }
+        });
+        
+        const startLoopTime = 3; 
+        const endLoopTime = 15;
+        
+        video.addEventListener('timeupdate', () => {
+          if (video.currentTime >= endLoopTime) {
+            video.currentTime = startLoopTime;
+            video.play();
+          }
+        });
+        
+        video.addEventListener('loadedmetadata', () => {
+          video.currentTime = startLoopTime;
         });
       }
     });
   </script>
 </body>
 </html>
+
+/* *****************************************************************
+ * 文件二：src/layouts/ArticleLayout.astro (统一的暗色文章布局)
+ * 这是所有内容页面的“装修风格”，确保风格统一。
+ * *****************************************************************/
+---
+// 文章布局 V3.0 - 暗色沉浸式阅读
+import '../styles/global.css'; // 确保全局样式被引用
+const { frontmatter } = Astro.props;
+---
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{frontmatter.title} - 暗域</title>
+</head>
+<body class="reading-view">
+    <main class="reading-container">
+        <header class="reading-header">
+            <h1>{frontmatter.title}</h1>
+        </header>
+        <article class="prose">
+            <slot />
+        </article>
+    </main>
+    <a href="/" class="return-link">&larr; 返回</a>
+</body>
+</html>
+<style>
+:global(body.reading-view) {
+    background-color: #111115;
+    color: #ccc;
+    padding: 4rem 2rem;
+    overflow-y: auto;
+    font-family: 'Noto Serif SC', serif;
+}
+.reading-container { max-width: 800px; margin: 0 auto; opacity: 0; animation: fadeIn 1s ease forwards; }
+.reading-header h1 { font-size: 3rem; color: #fff; border-bottom: 2px solid #a988d5; padding-bottom: 1rem; margin-bottom: 2rem; text-align: center; font-family: 'Noto Serif SC', serif; }
+.prose { font-size: 1.1rem; line-height: 1.8; }
+.prose :global(h2), .prose :global(h3) { color: #e0e0e0; border-bottom: 1px solid #444; padding-bottom: 0.5rem; margin-top: 2.5rem; font-family: 'Inter', sans-serif; }
+.prose :global(a) { color: #6c8eef; }
+.prose :global(blockquote) { border-left: 3px solid #a988d5; padding-left: 1.5rem; margin-left: 0; color: #aaa; font-style: italic; }
+.return-link { position: fixed; top: 30px; left: 30px; color: #888; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 5px; text-decoration: none; transition: all 0.3s ease; z-index: 1000; font-family: 'Inter', sans-serif; }
+.return-link:hover { color: #fff; background: #6c8eef; }
+@keyframes fadeIn { to { opacity: 1; } }
+</style>

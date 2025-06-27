@@ -1,45 +1,41 @@
 ---
-// 文章布局 V4.0 - 最终修正版
+// 文章布局 V3.0 - 暗色沉浸式阅读
 import '../styles/global.css';
-
-// **核心修正**：让布局更智能，能同时处理来自.md文件和.astro文件的标题
-const { frontmatter, title } = Astro.props;
-const pageTitle = frontmatter?.title || title || '无题'; // 优先使用frontmatter的标题，否则使用直接传递的title
+const { frontmatter } = Astro.props;
 ---
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>{pageTitle} - 暗域</title>
+    <title>{frontmatter.title} - 暗域</title>
 </head>
 <body class="reading-view">
     <main class="reading-container">
         <header class="reading-header">
-            <h1>{pageTitle}</h1>
+            <h1>{frontmatter.title}</h1>
         </header>
         <article class="prose">
             <slot />
         </article>
     </main>
-    <a href="/" class="return-link">&larr; 返回世界之门</a>
+    <a href="/" class="return-link">&larr; 返回</a>
 </body>
 </html>
 <style>
-/* 为阅读页面定制的body样式 */
 :global(body.reading-view) {
-    background-color: #111115; /* 深邃的阅读背景 */
+    background-color: #111115;
     color: #ccc;
     padding: 4rem 2rem;
-    overflow-y: auto; /* 允许长文章滚动 */
-    font-family: var(--font-serif);
+    overflow-y: auto;
+    font-family: 'Noto Serif SC', serif;
 }
 .reading-container { max-width: 800px; margin: 0 auto; opacity: 0; animation: fadeIn 1s ease forwards; }
-.reading-header h1 { font-size: 3rem; color: #fff; border-bottom: 2px solid #a988d5; padding-bottom: 1rem; margin-bottom: 2rem; text-align: center; font-family: var(--font-serif); }
+.reading-header h1 { font-size: 3rem; color: #fff; border-bottom: 2px solid #a988d5; padding-bottom: 1rem; margin-bottom: 2rem; text-align: center; font-family: 'Noto Serif SC', serif; }
 .prose { font-size: 1.1rem; line-height: 1.8; }
-.prose :global(h2), .prose :global(h3) { color: #e0e0e0; border-bottom: 1px solid #444; padding-bottom: 0.5rem; margin-top: 2.5rem; font-family: var(--font-sans); }
+.prose :global(h2), .prose :global(h3) { color: #e0e0e0; border-bottom: 1px solid #444; padding-bottom: 0.5rem; margin-top: 2.5rem; font-family: 'Inter', sans-serif; }
 .prose :global(a) { color: #6c8eef; }
 .prose :global(blockquote) { border-left: 3px solid #a988d5; padding-left: 1.5rem; margin-left: 0; color: #aaa; font-style: italic; }
-.return-link { position: fixed; top: 30px; left: 30px; color: #888; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 5px; text-decoration: none; transition: all 0.3s ease; z-index: 1000; font-family: var(--font-sans); }
+.return-link { position: fixed; top: 30px; left: 30px; color: #888; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 5px; text-decoration: none; transition: all 0.3s ease; z-index: 1000; font-family: 'Inter', sans-serif; }
 .return-link:hover { color: #fff; background: #6c8eef; }
 @keyframes fadeIn { to { opacity: 1; } }
 </style>

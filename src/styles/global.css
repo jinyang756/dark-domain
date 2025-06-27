@@ -1,38 +1,9 @@
-/* 全局风格定义 - “暗域”项目的基调 */
-
 :root {
-  --color-bg: #1a1a1a; /* 深黑灰色背景 */
-  --color-text: #cccccc; /* 柔和的灰色文字 */
-  --color-heading: #ffffff; /* 纯白色标题 */
-  --color-accent-blue: #6c8eef; /* 点缀色：暗蓝 */
-  --color-accent-purple: #a988d5; /* 点缀色：暗紫 */
-  --font-serif: '思源宋体', 'Source Han Serif SC', 'Noto Serif SC', serif;
-  --font-sans: '思源黑体', 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-}
-
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-serif); /* 正文默认使用衬线字体 */
-  margin: 0;
-  padding: 2rem;
-  font-size: 18px;
-  line-height: 1.7;
-  text-align: center; /* 全局居中，为书柜做准备 */
-}
-
-h1, h2, h3 {
-  font-family: var(--font-sans); /* 标题使用无衬线字体 */
-  color: var(--color-heading);
-  margin: 3rem 0 1rem;
-}
-
-a {
-  color: var(--color-accent-blue);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-a:hover {
-  color: var(--color-accent-purple);
+  --color-bg: #1a1a1a;
+  --color-text: #cccccc;
+  --color-heading: #ffffff;
+  --color-accent-blue: #6c8eef;
+  --color-accent-purple: #a988d5;
+  --font-serif: 'Noto Serif SC', serif;
+  --font-sans: 'Inter', sans-serif;
 }
